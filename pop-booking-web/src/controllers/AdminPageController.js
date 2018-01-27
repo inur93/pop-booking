@@ -25,10 +25,6 @@ class AdminPageController extends BasicController {
     v1 = '/v1/closedperiods';
     comp = null;
 
-    isNavItemVisible = (id) => {
-        return LoginController.isAdmin();
-    }
-
     hide = (id) => {
         return;
     }

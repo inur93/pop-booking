@@ -1,20 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import $ from 'jquery';
-
 //misc
-import Helper from '../shared/HelperFunctions';
 import Api from '../shared/RestApi';
-
 //components
-import BookingCalendar from '../components/booking/BookingCalendar';
-import ViewBooking from '../components/booking/ViewBooking';
-
 //controllers
-import MessageController from './MessageController';
-import ModalControllar from './ModalController';
-import LoginController from './LoginController';
-import BookingController from './BookingController';
 import BasicController from './BasicController';
 
 class BookableObjectController extends BasicController {

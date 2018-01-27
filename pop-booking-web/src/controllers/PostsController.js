@@ -1,7 +1,8 @@
 import Api from '../shared/RestApi';
 import MessageController from './MessageController';
 import BasicController from './BasicController';
-
+import {computed, extendObservable} from 'mobx';
+import HelperFunctions from "../shared/HelperFunctions";
 class PostsController extends BasicController{
 
     page = 0;
@@ -10,8 +11,22 @@ class PostsController extends BasicController{
 
     v1 = '/v1/posts';
 
+    posts;
+    isLoading;
+    constructor(){
+        super();
+
+        extendObservable(this, {
+            posts: [],
+            isLoading: true
+        })
+
+        this.getPosts();
+    }
+
+
     getPosts = () => {
-        return this.queryPosts(this.page, this.number);
+        this.queryPosts(this.page, this.number);
     }
 
     getMorePosts = () => {
@@ -20,7 +35,11 @@ class PostsController extends BasicController{
     }
 
     queryPosts = (page, number) => {
-        return Api.GET('/v1/posts?page=' + page + '&number=' + number);
+        Api.GET('/v1/posts?page=' + page + '&number=' + number).then(posts => {
+            if(posts && posts.length) {
+                posts.forEach(p => this.posts.push(new Post(p, this)))
+            }
+        })
     }
 
     create = (content) => {
@@ -39,4 +58,21 @@ class PostsController extends BasicController{
 
 }
 
-export default (new PostsController());
+export default new PostsController();
+
+export class Post {
+
+    createdFormatted;
+    constructor(post, store){
+        this.createdFormatted = HelperFunctions.getDateAsStringAndFormat(post.created);
+
+        extendObservable(this, {
+            title: post.title,
+            removable: computed(() => {
+                return true; //TODO
+            }),
+            createdBy: post.createdBy,
+
+        });
+    }
+}

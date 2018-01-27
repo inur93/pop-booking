@@ -71,7 +71,7 @@ export default class RestClient {
       fullRoute = `${fullRoute}?${query}`;
       body = undefined;
     }
-    var authToken = LoginController.getAuthToken();
+    var authToken = LoginController.authToken;
     if (authToken) {
       Object.assign(this.headers, { 'Authorization': 'Bearer ' + authToken });
     }

@@ -1,22 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
-
 //misc
-import Helper from '../shared/HelperFunctions';
 import Api from '../shared/RestApi';
 import Guid from '../shared/Guid';
-
 //components
 import BookingCalendar from '../components/booking/BookingCalendar';
 import ViewBooking from '../components/booking/ViewBooking';
-
 //controllers
 import MessageController from './MessageController';
-import ModalControllar from './ModalController';
+
 import LoginController from './LoginController';
 import BasicController from './BasicController';
-import MainController from './MainController';
 
 class BookingController extends BasicController {
 
@@ -97,7 +91,7 @@ class BookingController extends BasicController {
             ref={r => this.currentBookingInModal.modalRef = r}
             booking={booking}
             id={this.currentModalId} />;
-        ModalControllar.showModal(this.currentModalId, this.viewTitle, viewBookingModal, this.getViewButtons());
+        //ModalControllar.showModal(this.currentModalId, this.viewTitle, viewBookingModal, this.getViewButtons());
         this.cancelEdit();
     }
 
@@ -141,8 +135,8 @@ class BookingController extends BasicController {
         this.currentBookingInModal.modalRef.setState({
             editMode: true
         });
-        ModalControllar.updateButtons(this.currentModalId, this.getEditButtons());
-        ModalControllar.updateTitle(this.currentModalId, this.editTitle);
+      //  ModalControllar.updateButtons(this.currentModalId, this.getEditButtons());
+     //   ModalControllar.updateTitle(this.currentModalId, this.editTitle);
     }
 
     cancelEdit = () => {
@@ -150,8 +144,8 @@ class BookingController extends BasicController {
             this.currentBookingInModal.modalRef.setState({
                 editMode: false
             });
-            ModalControllar.updateButtons(this.currentModalId, this.getViewButtons());
-            ModalControllar.updateTitle(this.currentModalId, this.viewTitle);
+       //     ModalControllar.updateButtons(this.currentModalId, this.getViewButtons());
+        //    ModalControllar.updateTitle(this.currentModalId, this.viewTitle);
         }
     }
 
@@ -162,7 +156,7 @@ class BookingController extends BasicController {
 
     closeViewBooking = () => {
         this.cancelEdit(); // make sure that editmode is cancelled
-        ModalControllar.hideModal(this.currentModalId);
+     //   ModalControllar.hideModal(this.currentModalId);
     }
 
     getMyBookings() {
