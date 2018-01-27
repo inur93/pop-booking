@@ -1,0 +1,48 @@
+{
+  "name": "pop-booking-web",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": ".",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "dateformat": "^2.0.0",
+    "form-serialize": "^0.7.2",
+    "fullcalendar": "^3.4.0",
+    "jquery": "^3.2.1",
+    "moment": "^2.18.1",
+    "qs": "^6.4.0",
+    "react": "^15.6.1",
+    "react-app-env": "^1.2.0",
+    "react-bootstrap": "^0.30.10",
+    "react-bootstrap-modal": "^3.0.1",
+    "react-bootstrap-navbar": "^1.1.0",
+    "react-bootstrap-time-picker": "^1.0.3",
+    "react-color": "^2.12.1",
+    "react-cookie": "^1.0.5",
+    "react-date-picker": "^5.3.28",
+    "react-dom": "^15.6.1",
+    "react-dropzone": "^4.0.0",
+    "react-fullcalendar": "^1.0.0",
+    "react-native-rest-client": "^0.1.1",
+    "react-recaptcha": "^2.3.5",
+    "react-select": "^1.0.0-rc.5",
+    "react-select-box": "^3.0.1",
+    "react-tag-input": "^4.7.2",
+    "react-token-autocomplete": "^0.5.3",
+    "react-upload-file": "^2.0.0-beta.6"
+  },
+  "devDependencies": {
+    "node-sass": "^4.5.3",
+    "npm-run-all": "^4.0.2",
+    "react-scripts": "0.9.5"
+  },
+  "scripts": {
+    "build-css": "node-sass src/stylesheets/scss/ -o src/stylesheets/css/",
+    "watch-css": "npm run build-css && node-sass src/stylesheets/scss/ -o src/stylesheets/css --watch --recursive",
+    "start-js": "react-app-env start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && react-app-env build",
+    "test": "react-app-env test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

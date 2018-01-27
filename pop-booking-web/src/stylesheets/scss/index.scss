@@ -1,0 +1,363 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+textarea{
+    resize: vertical
+}
+
+.image-preview{
+    max-width: 100%;
+}
+
+.image-dropzone{
+    width: 100%;
+    min-height: 50px;
+    border-width: 2px;
+    border-color: rgb(102, 102, 102);
+    border-style: dashed;
+    border-radius: 5px;
+}
+
+/* The Overlay (background) */
+// .overlay {
+//     /* Height & width depends on how you want to reveal the overlay (see JS below) */    
+//     height: 0;
+//     width: 100%;
+//     position: fixed; /* Stay in place */
+//     z-index: 10; /* Sit on top */
+//     left: 0;
+//     top: 0;
+//     background-color: rgb(0,0,0); /* Black fallback color */
+//     background-color: rgba(0,0,0, 0.8); /* Black w/opacity */
+//     overflow-x: hidden; /* Disable horizontal scroll */
+//     transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+// }
+
+/* Position the content inside the overlay */
+// .overlay-content {
+//     position: relative;
+//     top: 15%; /* 25% from the top */
+//     width: 100%; /* 100% width */
+//     text-align: center; /* Centered text/links */
+//     //margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+// }
+
+/* The navigation links inside the overlay */
+// .overlay a {
+//     padding: 8px;
+//     text-decoration: none;
+//     font-size: 36px;
+//     color: #818181;
+//     display: block; /* Display block instead of inline */
+//     transition: 0.3s; /* Transition effects on hover (color) */
+// }
+
+/* When you mouse over the navigation links, change their color */
+// .overlay a:hover, .overlay a:focus {
+//     color: #f1f1f1;
+// }
+
+// #loginform{
+//     background: white;
+//     position: absolute;
+//     padding-top: 10%;
+//     padding-bottom: 10%;
+//     padding-right: 5%;
+//     padding-left: 5%;
+// }
+
+.viewbooking{
+    background: white;
+    position: absolute;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    padding-right: 5%;
+    padding-left: 5%;
+}
+
+/* Position the close button (top right corner) */
+// .overlay .closebtn {
+//     position: absolute;
+//     top: 20px;
+//     right: 45px;
+//     font-size: 60px;
+// }
+
+/* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+@media screen and (max-height: 450px) {
+    .overlay a {font-size: 20px}
+    .overlay .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+    }
+}
+
+.control-label{
+  float: left;
+}
+
+//spinner
+.loader {
+    border: 10px solid #f3f3f3; /* Light grey */
+    border-top: 10px solid #a6a6a6; 
+    border-radius: 50%;
+    width: 41px;
+    height: 41px;
+    animation: spin 2s linear infinite;
+    display: inline-block;
+    display: -webkit-inline-box;
+
+    &.small{
+        border-width: 4px;
+        width: 14px;
+        height: 14px;
+    }
+    
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.info-box{
+    position: fixed;
+    margin-bottom: 25px;
+    bottom: 0%;
+    right: 15px;
+    width: 200px;
+    z-index: 1100;
+}
+
+.prop-list {
+    p, label{
+    width: 50%;
+    display: -webkit-inline-box;
+    }
+    p{
+        direction: ltr;
+        padding-left: 5px;
+    }
+    label{
+        direction: rtl;
+        padding-right: 5px;
+    }
+}
+
+.control-component{
+    padding-top: 10px;
+}
+
+
+.collapse-link{
+    &:focus, &:hover{
+    text-decoration: none;
+    }
+    font-size: x-large;
+}
+
+/*
+multiselect
+
+*/
+
+
+.ant-select {
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    color: rgba(0,0,0,.65);
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.ant-select-lg .ant-select-selection--multiple {
+    min-height: 32px;
+}
+
+.ant-select-selection--multiple {
+    min-height: 28px;
+    cursor: text;
+    padding-bottom: 3px;
+    zoom: 1;
+}
+
+.ant-select-selection {
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    display: block;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    -webkit-transition: all .3s cubic-bezier(.645,.045,.355,1);
+    transition: all .3s cubic-bezier(.645,.045,.355,1);
+}
+
+.ant-select-selection--multiple:after, .ant-select-selection--multiple:before {
+    content: " ";
+    display: table;
+}
+
+.ant-select-focused .ant-select-selection, .ant-select-selection:active, .ant-select-selection:focus {
+    border-color: #49a9ee;
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(16,142,233,.2);
+}
+
+.ant-select-selection:hover {
+    border-color: #49a9ee;
+}
+
+.ant-select-selection--multiple .ant-select-selection__rendered {
+    margin-left: 5px;
+    margin-bottom: -3px;
+    height: auto;
+}
+
+.ant-select-lg .ant-select-selection__rendered {
+    line-height: 30px;
+}
+
+.ant-select-lg .ant-select-selection__rendered {
+    line-height: 30px;
+}
+
+.ant-select-selection--multiple .ant-select-selection__rendered {
+    margin-left: 5px;
+    margin-bottom: -3px;
+    height: auto;
+}
+
+.ant-select-selection__rendered {
+    display: block;
+    margin-left: 7px;
+    margin-right: 7px;
+    position: relative;
+    line-height: 26px;
+}
+
+.ant-select-search__field__placeholder, .ant-select-selection__placeholder {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 9px;
+    color: #ccc;
+    line-height: 20px;
+    height: 20px;
+    max-width: 100%;
+    margin-top: -10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.ant-select-selection__rendered ul{
+    list-style: none;
+}
+
+.ant-select-lg .ant-select-selection__rendered {
+    line-height: 30px;
+}
+
+.ant-select-lg .ant-select-selection__rendered {
+    line-height: 30px;
+}
+
+.ant-select-selection__rendered {
+    display: block;
+    margin-left: 7px;
+    margin-right: 7px;
+    position: relative;
+    line-height: 26px;
+}
+
+.ant-select-lg .ant-select-selection--multiple .ant-select-selection__rendered li {
+    height: 24px;
+    line-height: 24px;
+}
+
+.ant-select-selection--multiple .ant-select-selection__rendered>ul>li, .ant-select-selection--multiple>ul>li {
+    margin-top: 3px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.ant-select-selection--multiple .ant-select-selection__choice {
+    color: rgba(0,0,0,.65);
+    background-color: #f3f3f3;
+    border-radius: 4px;
+    cursor: default;
+    float: left;
+    margin-right: 4px;
+    max-width: 99%;
+    position: relative;
+    overflow: hidden;
+    -webkit-transition: padding .3s cubic-bezier(.645,.045,.355,1);
+    transition: padding .3s cubic-bezier(.645,.045,.355,1);
+    padding: 0 20px 0 10px;
+}
+
+.ant-select-selection--multiple .ant-select-selection__choice__content {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    -webkit-transition: margin .3s cubic-bezier(.645,.045,.355,1);
+    transition: margin .3s cubic-bezier(.645,.045,.355,1);
+}
+
+.ant-select-selection--multiple .ant-select-selection__choice__remove:hover {
+    color: #404040;
+}
+
+:root .ant-select-selection--multiple .ant-select-selection__choice__remove {
+    -webkit-filter: none;
+    filter: none;
+    font-size: 12px;
+}
+
+.ant-select-selection--multiple .ant-select-selection__choice__remove {
+    font-style: normal;
+    vertical-align: baseline;
+    text-align: center;
+    text-transform: none;
+    line-height: 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: rgba(0,0,0,.43);
+    line-height: inherit;
+    cursor: pointer;
+    font-weight: 700;
+    -webkit-transition: all .3s cubic-bezier(.645,.045,.355,1);
+    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    display: inline-block;
+    font-size: 12px;
+    font-size: 8px\9;
+    -webkit-transform: scale(.66666667) rotate(0deg);
+    -ms-transform: scale(.66666667) rotate(0deg);
+    transform: scale(.66666667) rotate(0deg);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=1, M12=0, M21=0, M22=1)";
+    zoom: 1;
+    position: absolute;
+    right: 4px;
+    padding: 0 0 0 8px;
+}
+
+.modal-body{
+    overflow-y: auto;
+    max-height: -webkit-calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
+    max-height: -mos-osx-calc(100vh - 200px);
+}
