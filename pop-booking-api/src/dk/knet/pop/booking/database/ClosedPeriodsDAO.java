@@ -22,13 +22,15 @@ public class ClosedPeriodsDAO extends BasicDAO{
 		return newPeriod;
 	}
 
-	public void update(ClosedPeriod period) throws BasicException{
+	public ClosedPeriod update(ClosedPeriod period) throws BasicException{
 
 		if(isPeriodValid(period)){
 			start();
-			simpleUpdate(period);
+			ClosedPeriod updated = simpleUpdate(period);
 			end();
+			return updated;
 		}
+		throw new InvalidArgsException("Period was not valid");
 	}
 
 	public void delete(ClosedPeriod period) {

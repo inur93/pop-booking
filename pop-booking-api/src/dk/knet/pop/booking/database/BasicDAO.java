@@ -14,7 +14,6 @@ import org.hibernate.SessionFactory;
 
 public class BasicDAO {
 
-	protected static Logger logger = Logger.getLogger(BasicDAO.class);
 	protected Session s = null;
 	protected BasicDAO() {
 	}

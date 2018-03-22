@@ -1,110 +1,92 @@
 package dk.knet.pop.booking.services.rest;
 
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import dk.knet.pop.booking.controllers.BookingController;
+import dk.knet.pop.booking.controllers.ControllerRegistry;
+import dk.knet.pop.booking.controllers.impl.BookingController;
 import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.models.Booking;
-import dk.knet.pop.booking.models.BookingType;
 import dk.knet.pop.booking.models.BookingUser;
-import dk.knet.pop.booking.models.Message;
 import dk.knet.pop.booking.models.Role;
+
+import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_BOOKING_UNKNOWN;
+import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_USER_INVALID;
 
 @Path("/v1/bookings")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class BookingService extends ProtectedService {
 
-	private BookingController bookingController = new BookingController();
+	private BookingController bookingController = ControllerRegistry.getBookingController();
 
 	@GET
-	@Path("/mybookings/{userId}")
-	public List<Booking> getBookings(
-			@PathParam("userId") long userId, 
-			@DefaultValue(value="0") @QueryParam("fromDate") long from) throws BasicException {
+	@Path("/self")
+	public List<Booking> getBookings(@DefaultValue(value="0") @QueryParam("fromDate") long from) throws BasicException {
 		BookingUser user = checkTokenAndRole(Role.DEFAULT);
-
-		//if user wants bookings from other user, he needs to be admin 
-		if(user.getId() != userId){
-			checkTokenAndRole(Role.ADMIN); // throws exception if not admin
-		}
-		return bookingController.getBookings(userId, new Date(from));
+		return bookingController.getBookings(user.getId(), new Date(from));
 	}
 
-	@GET @Path("/{type}")
+	@GET
 	public List<Booking> getBookings(
 			@QueryParam("start") long from, 
-			@QueryParam("end") long to,
-			@PathParam("type") String type) {
-		List<Booking> bookings = bookingController.getBookings(new Date(from), new Date(to), BookingType.valueOf(type));
+			@QueryParam("end") long to) {
+		List<Booking> bookings = bookingController.getBookings(new Date(from), new Date(to), null);
 		return bookings;
 	}
 
-	@PUT @Path("/new")
-	public Message createBooking(Booking booking) throws BasicException{
+	@POST
+	public Booking createBooking(Booking booking) throws BasicException{
 
 		BookingUser user = checkTokenAndRole(Role.DEFAULT, Role.ADMIN, Role.EDITOR);
 		if (user != null) 
 		{
 			booking.setBooker(user); //make sure user books on his own behalf
-			bookingController.createBooking(booking);
+			return bookingController.createBooking(booking);
 
 		}
-		return new Message("Booking created successfully");
+		throw new BasicException(Response.Status.BAD_REQUEST, "Could not book items.");
+		//return new Message("Booking created successfully");
 	}
 
-	@PUT @Path("/multiplenew")
-	public Message createMultipleBookings(List<Booking> bookings) throws BasicException{
+	@POST @Path("/create")
+	public List<Booking> createMultipleBookings(List<Booking> bookings) throws BasicException{
 
 		BookingUser user = checkTokenAndRole(Role.DEFAULT, Role.ADMIN, Role.EDITOR);
+		List<Booking> created = new ArrayList<>();
 		if (user != null) 
 		{
 			for(Booking booking : bookings){
 				booking.setBooker(user); //make sure user books on his own behalf
-				bookingController.createBooking(booking);
+				created.add(bookingController.createBooking(booking));
 			}
-
+			return created;
 		}
-		return new Message("Booking created successfully");
+		throw new BasicException(Response.Status.BAD_REQUEST, ERROR_BOOKING_UNKNOWN);
+		//return new Message("Booking created successfully");
 	}
 
-	@DELETE @Path("/delete/{id}")
-	public Message deleteBooking(@PathParam("id") long bookingId) throws BasicException{
+	@DELETE @Path("/{id}")
+	public void deleteBooking(@PathParam("id") long bookingId) throws BasicException{
 		BookingUser user = checkTokenAndRole(Role.DEFAULT, Role.EDITOR, Role.ADMIN);
 		bookingController.deleteBooking(bookingId, user);
-		return new Message("Booking deleted");
 	}
 
-	@POST @Path("/update")
-	public Message updateBooking(Booking booking) throws BasicException{
+	@PUT @Path("/{id}")
+	public Booking updateBooking(@PathParam("id") long id, Booking booking) throws BasicException{
 		BookingUser user = checkTokenAndRole(Role.DEFAULT, Role.EDITOR, Role.ADMIN);
 		if(user != null){
-			bookingController.updateBooking(booking, user);
+			return bookingController.updateBooking(booking, user);
 		}else{
-			throw new BadRequestException("User could not be resolved");
+			throw new BadRequestException(ERROR_USER_INVALID);
 		}
-		return new Message("Booking saved");
 	}
 	
 //	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
@@ -145,10 +127,6 @@ public class BookingService extends ProtectedService {
 //		}
 //	}
 
-	@GET
-	public String getMsg() {
-		return "Hello booking";
-	}
 
 	protected Date parseDate(String date) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");

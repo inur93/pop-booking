@@ -25,6 +25,8 @@ import dk.knet.pop.booking.security.MalformedTokenException;
 import dk.knet.pop.booking.security.PermissionDeniedException;
 import dk.knet.pop.booking.security.PermissionExpiredException;
 
+import static dk.knet.pop.booking.configs.ErrorStrings.*;
+
 
 /**
  * SuperClass to ensure methods for checking Token and Roles + set consumes/produces to JSON
@@ -47,41 +49,35 @@ public abstract class ProtectedService {
 	 
 	public BookingUser checkTokenAndRole(Role... allowedroles) throws BasicException{
 		//Check if headers are properly injected
-		if (headers==null) throw new AuthorizationException(Response.Status.INTERNAL_SERVER_ERROR, "Server error - ServiceUtil");
+		if (headers==null) throw new AuthorizationException(Response.Status.INTERNAL_SERVER_ERROR, ERROR_SERVER_UNKNOWN);
 		//Check if Authorization Headers are set
 		List<String> authHeaders = headers.getRequestHeader("Authorization");
 		
-		if (authHeaders== null || authHeaders.get(0)==null) throw new AuthorizationException(Response.Status.FORBIDDEN, "No Authorization header");
+		if (authHeaders== null || authHeaders.get(0)==null) throw new AuthorizationException(Response.Status.FORBIDDEN, ERROR_AUTHENITCATION_NOT_LOGGED_IN);
 				
 		String autorizationString = authHeaders.get(0); //Get first ( and probably only) authorization header
 		String jwtString = autorizationString.split(" ")[1]; //Remove 'bearer' from token
 		//B.log(this, jwtString);
-		JWTHandler jwtH = new JWTHandler();
 		try {
 			//Validate JWT claims
-			BookingUser viewUser = jwtH.validateJWT(jwtString, allowedroles);
+			BookingUser viewUser = JWTHandler.getInstance().validateJWT(jwtString, allowedroles);
 			
 			//Refresh token
-			setHeaders(jwtH, viewUser);
+			setHeaders(viewUser);
 			return viewUser;
-		} catch (PermissionExpiredException | PermissionDeniedException e) {
-			throw new AuthorizationException(Status.FORBIDDEN, e.getMessage());
+		} catch (PermissionExpiredException e) {
+			throw new AuthorizationException(Status.UNAUTHORIZED, ERROR_AUTHENTICATION_EXPIRED);
+		} catch(PermissionDeniedException e){
+			throw new AuthorizationException(Status.UNAUTHORIZED, ERROR_AUTHENTICATION_PERMISSION_DENIED);
 		} catch (MalformedTokenException e) {
-			throw new AuthorizationException(Status.BAD_REQUEST, e.getMessage());
+			throw new AuthorizationException(Status.BAD_REQUEST, ERROR_AUTHENTICATION_INVALID_USER);
 		}
 		
 		
 	}
 	
-	
-	
 	protected void setHeaders(BookingUser user) {
-		this.setHeaders(null, user);
-	}
-	
-	protected void setHeaders(JWTHandler handler, BookingUser user) {
-		if(handler == null) handler = new JWTHandler();
-		String jwtToken = handler.createJWT(user, LOGIN_DURATION );
+		String jwtToken = JWTHandler.getInstance().createJWT(user, LOGIN_DURATION );
 		response.setHeader("Authorization", "Bearer2 " + jwtToken);
 		response.setDateHeader("TokenTimeout", new Date().getTime()+LOGIN_DURATION);
 	}

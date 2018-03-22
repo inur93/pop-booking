@@ -12,6 +12,7 @@ import ReactUploadFile from 'react-upload-file';
 //controllers
 import MessageController from '../../controllers/MessageController';
 import BookingController from '../../controllers/BookingController';
+import LanguageStore from "../../controllers/LanguageStore";
 
 export default class ViewBooking extends React.Component {
 
@@ -126,6 +127,7 @@ export default class ViewBooking extends React.Component {
 
 
     render() {
+        //TODO langauge translation
         return (
             <div>
                 <div className="form-group">

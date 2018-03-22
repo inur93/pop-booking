@@ -8,6 +8,7 @@ import java.util.Date;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dk.knet.pop.booking.controllers.impl.ConfigManager;
 import dk.knet.pop.booking.models.Role;
 import dk.knet.pop.booking.models.BookingUser;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,23 +17,26 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.impl.crypto.MacProvider;
+import lombok.extern.slf4j.Slf4j;
 
 /** 
  * Handles JWT creation/Validation
  * @author Christian
  *
  */
+@Slf4j
 public class JWTHandler {
 
 	private static String defaultKeyBase64 = "5iAdBqSDrmqihDqY5o92c96CYzuyi6QMjlknh3ZxjMsdi7TK9SCu9Nq9Jt21cHz";
 
+	private static JWTHandler handler;
 	private byte[] secretKey;
 	private SignatureAlgorithm alg;
 
 	public static String generateSecret(){
 		byte[] keyBytes = MacProvider.generateKey().getEncoded();
-		////System.out.println(keyBytes);
-		return Base64.getEncoder().encodeToString(keyBytes);		
+		//System.out.println(keyBytes);
+		return Base64.getEncoder().encodeToString(keyBytes);
 	}
 
 	public JWTHandler(String base64SecretString, SignatureAlgorithm alg){
@@ -40,18 +44,32 @@ public class JWTHandler {
 		this.alg=alg;
 	}
 
-	public JWTHandler(){
+	public static JWTHandler getInstance(){
+		if(handler==null) {
+			if (!ConfigManager.DEBUG) {
+				log.error("Deploying to Production - generating key!");
+				String keyString = generateSecret();
+				handler = new JWTHandler(keyString, SignatureAlgorithm.HS512);
+			} else {
+				handler = new JWTHandler();
+			}
+		}
+		return handler;
+
+	}
+
+	private JWTHandler(){
 		this(defaultKeyBase64, SignatureAlgorithm.HS512);
 	}
 	/**
-	 * 
-	 * @param user is added to token
+	 *
+	 * @param viewUser is added to token
 	 * @param loginDuration in seconds
-	 * @return
+	 * @return test
 	 */
-	public String createJWT(BookingUser user, Long loginDuration) {
+	public String createJWT(BookingUser viewUser, Long loginDuration) {
 		return Jwts.builder()
-				.claim("user", user)
+				.claim("user", viewUser)
 				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis()+loginDuration*1000))
 				.signWith(alg, getSecretKey())
@@ -70,36 +88,36 @@ public class JWTHandler {
 					.getBody()
 					.get("user");
 			//Parse map to ViewUser
-			BookingUser user = parseMapToViewUser(map);
-			if (user==null) throw new MalformedTokenException("Token Corrupt");
+			BookingUser viewUser = parseMapToViewUser(map);
+			if (viewUser==null) throw new MalformedTokenException("Token Corrupt");
 			//Iterate over roles to check if permission is ok
 			//B.log(this, allowedRoles.length);
 			if (allowedRoles!=null && allowedRoles.length>0 && allowedRoles[0]!=null) {
 				boolean allowed = false; //No access per default
 				for (Role role : allowedRoles) {
-					 if (user.getAssignedRoles().contains(role)){
-						 allowed = true;
-					 }	
+					if (viewUser.getRoles().contains(role)){
+						allowed = true;
+					}
 				}
 				if (allowed == false){
-//					B.log(this, "Permission Denied - Need role: " + Arrays.toString(allowedRoles));
+					log.error("Permission Denied - Need role: " + Arrays.toString(allowedRoles));
 					throw new PermissionDeniedException("Not allowed for this role");
 				}
-				
+
 			};
 			//B.log(this,"Permission granted");
 
-			return user;
+			return viewUser;
 		} catch (SignatureException sigE){
-//			B.log(this, "signatureExeption");
+			log.error("signatureException");
 			throw new PermissionDeniedException("Bad signature");
 		} catch (ExpiredJwtException expE){
-//			B.log(this, "Token Expired");
-			throw new PermissionExpiredException("Token Expired");
+			log.trace("Token Expired");
+			throw new PermissionExpiredException("Token Expired: " +expE.getClaims());
 		} catch (MalformedJwtException malE){
 			throw new MalformedTokenException("Token corrupt!");
 		} catch (JsonProcessingException e) {
-			throw new MalformedTokenException("Cannot parse User from token");
+			throw new MalformedTokenException("Cannot parse ViewUser from token");
 		}
 
 	}
@@ -107,15 +125,15 @@ public class JWTHandler {
 	private BookingUser parseMapToViewUser(Object map) throws JsonProcessingException, MalformedTokenException {
 		ObjectMapper mapper = new ObjectMapper();
 		//Convert map to JSON String
-		String mapString = mapper.writeValueAsString(map);			
-		BookingUser user = null;
+		String mapString = mapper.writeValueAsString(map);
+		BookingUser viewUser = null;
 		try {
-			user = mapper.readValue(mapString, BookingUser.class);
+			viewUser = mapper.readValue(mapString, BookingUser.class);
 
 		} catch (IOException e) {
-			throw new MalformedTokenException("Cannot parse User from token");
+			throw new MalformedTokenException("Cannot parse ViewUser from token");
 		}
-		return user;
+		return viewUser;
 	}
 
 
@@ -126,5 +144,4 @@ public class JWTHandler {
 	public void setSecretKey(byte[] secretKey) {
 		this.secretKey = secretKey;
 	}
-
 }

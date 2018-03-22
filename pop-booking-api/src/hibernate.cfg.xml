@@ -39,12 +39,13 @@
 		<!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
 
 		<!-- Persistent classes -->
-
+		<mapping class="dk.knet.pop.booking.models.DictionaryEntry" />
 		<mapping class="dk.knet.pop.booking.models.BookableItem" />
 		<mapping class="dk.knet.pop.booking.models.Booking" />
 		<mapping class="dk.knet.pop.booking.models.BookingUser" />
 		<mapping class="dk.knet.pop.booking.models.PostItem" />
 		<mapping class="dk.knet.pop.booking.models.ClosedPeriod" />
+
 <!-- 		<mapping class="dk.knet.pop.booking.models.Property" /> -->
 
 	</session-factory>

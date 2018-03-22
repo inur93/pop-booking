@@ -3,21 +3,13 @@ package dk.knet.pop.booking.models;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,22 +17,26 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "pop_users")
+@Builder
 public class BookingUser {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Transient
+	@Transient @JsonIgnore
 	private String token;
+	@Transient @JsonIgnore
+	private String captchaToken;
+	@JsonIgnore
 	private String tokenHash;
 	private Boolean isUserActive;
 	private String name;
 	private String username;
+
 	private String password;
 	
-	@Transient
-	private String captchaToken;
+
 	
 	private Date lastUpdated;
 	private String roomNo;
@@ -48,12 +44,12 @@ public class BookingUser {
 	
 	@ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.ORDINAL)
-	private Set<Role> assignedRoles;
+	private Set<Role> roles;
 	
 	
 	@Override
 	public String toString() {
-		return "id=" + id + ";name=" + username + ";password=" + password + ";isActive=" + isUserActive + ";roles=" + assignedRoles;
+		return "id=" + id + ";name=" + username + ";password=" + password + ";isActive=" + isUserActive + ";roles=" + roles;
 	}
 
 }

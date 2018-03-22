@@ -29,10 +29,11 @@ public class BookableObjectDAO extends BasicDAO{
 		return created;
 	}
 	
-	public void updateBookableItem(BookableItem item){
+	public BookableItem updateBookableItem(BookableItem item){
 		start();
-		simpleUpdate(item);
+		BookableItem updated = simpleUpdate(item);
 		end();
+		return updated;
 	}
 	
 	public void deleteBookableItem(long id){

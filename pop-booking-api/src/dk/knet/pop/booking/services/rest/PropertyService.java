@@ -1,12 +1,10 @@
 package dk.knet.pop.booking.services.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import dk.knet.pop.booking.controllers.PropertyController;
+import dk.knet.pop.booking.controllers.ControllerRegistry;
+import dk.knet.pop.booking.controllers.impl.PropertyController;
 import dk.knet.pop.booking.models.Property;
 
 
@@ -16,9 +14,9 @@ import dk.knet.pop.booking.models.Property;
 public class PropertyService {
 
 	
-	PropertyController controller = new PropertyController();
-	
-	@Path("/get/{id}")
+	PropertyController controller = ControllerRegistry.getPropertyController();
+	@GET
+	@Path("/{id}")
 	public Property getProperty(@PathParam("id") String id){
 		return controller.getProperty(id);
 	}

@@ -1,6 +1,5 @@
 import React from 'react';
 import 'jquery';
-import 'bootstrap/dist/js/bootstrap.min.js';
 import { ChromePicker } from 'react-color';
 
 //misc

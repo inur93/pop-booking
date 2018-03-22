@@ -1,7 +1,5 @@
 //modules
 import React from 'react';
-import 'jquery';
-import 'bootstrap/dist/js/bootstrap.min.js';
 
 //misc
 import Helper from '../../shared/HelperFunctions';

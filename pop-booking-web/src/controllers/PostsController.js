@@ -1,14 +1,30 @@
-import Api from '../shared/RestApi';
+import RestClient from '../shared/RestClient';
 import MessageController from './MessageController';
-import BasicController from './BasicController';
+import PostItem from "../models/PostItem";
+import {extendObservable} from 'mobx';
 
-class PostsController extends BasicController{
+export default class PostsController {
 
     page = 0;
     number = 5;
     step = 1;
 
-    v1 = '/v1/posts';
+    path = '/v1/posts';
+
+    posts;
+    isLoading;
+    error;
+
+
+    constructor() {
+        extendObservable(this, {
+            posts: [],
+            isLoading: true,
+            error: false
+        });
+
+        this.getPosts();
+    }
 
     getPosts = () => {
         return this.queryPosts(this.page, this.number);
@@ -20,23 +36,41 @@ class PostsController extends BasicController{
     }
 
     queryPosts = (page, number) => {
-        return Api.GET('/v1/posts?page=' + page + '&number=' + number);
+        this.error = false;
+        return RestClient.GET(this.path + '?page=' + page + '&number=' + number)
+            .then(posts => {
+                this.isLoading = false;
+                if (posts) {
+                    posts.forEach(p => {
+                        this.posts.push(new PostItem(p, this));
+                    })
+                }
+            })
+            .catch(reason => this.error = true);
     }
 
     create = (content) => {
-        return Api.POST(this.v1 + '/create', {
+        return RestClient.POST(this.path, {
             content: content,
             created: new Date()
-        }).catch(err => MessageController.addDangerMessage(err.message));
+        }).then(created => {
+            this.posts.push(new PostItem(created, this));
+        }).catch(err => {
+            MessageController.addDangerMessage(err.message);
+            throw err;
+        });
     }
 
-    remove = (id) => {
-        if (id) {
-            return Api.DELETE(this.v1 + '/delete/' + id)
-                .catch(err => MessageController.addDangerMessage(err.message));
+    remove = (item) => {
+        if (item) {
+            return RestClient.DELETE(this.path + "/" + item.id)
+                .then(res => {
+                    this.posts = this.posts.filter(p => p.id !== item.id);
+                })
+                .catch(err => {
+                    //TODO
+                });
         }
     }
 
 }
-
-export default (new PostsController());

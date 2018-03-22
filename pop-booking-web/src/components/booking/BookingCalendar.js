@@ -1,310 +1,257 @@
 import React from 'react';
-import 'react-date-picker/index.css';
-import Helper from '../../shared/HelperFunctions';
-
 //misc
-import Guid from '../../shared/Guid';
-
 //components
-import { SelectBookable, SelectDate, SelectTime } from '../shared/BookingComponents';
-import Calendar from './Calendar';
-import { Select } from '../shared/Select';
-import {Message} from '../shared/MessageList';
-
 //controllers
-import MessageController from '../../controllers/MessageController';
-import LoginController from '../../controllers/LoginController';
 import BookingController from '../../controllers/BookingController';
-import BookableObjectController from '../../controllers/BookableObjectsController';
-import AdminPageController from '../../controllers/AdminPageController';
+import {observer} from "mobx-react";
+import PropTypes from 'prop-types';
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
+import {extendObservable, transaction} from 'mobx';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import CreateBooking from "./CreateBooking";
+import StoreRegistry from "../../controllers/StoreRegistry";
+import EditBooking from "./EditBooking";
+import LanguageStore from "../../controllers/LanguageStore";
+import SecurityStore from "../../controllers/SecurityStore";
+import {toast} from 'react-toastify';
+import {Glyphicon} from "react-bootstrap";
+import FloatingBtn from "../shared/FloatingBtn";
 
 
-export default class BookingCalendar extends React.Component {
+BigCalendar.momentLocalizer(moment);
 
-    calendar = {};
-    resumeFunction = null;
+
+class BookingCalendar extends React.Component {
+
+    views = {
+        MONTH: 'month',
+        WEEK: 'week',
+        DAY: 'day'
+    }
+    modals = {
+        EDIT_BOOKING: 'editBooking',
+        CREATE_BOOKING: 'createBooking'
+    }
+    currentDate;
+    selectedStartDate;
+    selectedEndDate;
+
+    currentModal;
+    currentBooking;
+
+    currentView;
 
     constructor(myProps) {
         super();
-        this.bookableItems = null;
-        var id = myProps.id;
-        this.toTimeId = id + "to-time";
-        this.toDateId = id + "to-date";
-        this.fromTimeId = id + "from-time";
-        this.fromDateId = id + "from-date";
-        this.calCounter = 0;
-
-        var now = new Date();
-        this.state = {
-            events: [],
-            showForm: LoginController.isLoggedIn(),
-            closedPeriods: [],
-            calendarComponent: null,
-            bookableItems: null,
-            bookingBtnPressed: false,
-            fromDate: Helper.getDateAsString(now),
-            toDate: Helper.getDateAsString(now),
-            fromTime: (now.getHours() + 1) % 24 * 3600,
-            toTime: (now.getHours() + 2) % 24 * 3600
-        };
-    }
-
-    componentDidMount() {
-        LoginController.addLoginStateChangedListener(this);
-        BookingController.addEventsChangedListener(this);
-
-        const comp = <Calendar
-            id={this.props.id + "customcalendar" + this.calCounter++}
-            key={Guid.create()}
-            events={this.getEventItems}
-            ref={(c) => this.calendar = c || this.calendar}
-            onEventClick={this.handleOnEventClick}
-            onDayClick={this.handleOnDayClick}
-            eventDrop={this.onEventDrop}
-            eventAllow={this.eventAllow}
-            onSelect={this.onSelect} />;
-
-
-        this.setState({
-            calendarComponent: comp
-        });
-
-        BookableObjectController.getBookableItemsByType(this.props.id)
-            .then(res => {
-                var list = res.map(x => {
-                    return {
-                        id: x.id,
-                        value: x.name,
-                        object: x
-                    }
-                });
-                this.setState({ bookableItems: list });
-            });
-
-    }
-    eventsChanged = () => {
-        debugger;
-        this.updateEvents();
-    }
-    updateEvents = () => {
-        this.calendar.refreshEvents();
-    }
-
-    loggedIn = () => {
-        this.setState({
-            showForm: true
-        });
-    }
-
-    loggedOut = () => {
-        this.setState({
-            showForm: false
-        });
-    }
-
-    getEventItems = (start, end, timezone, callback) => {
-        BookingController.getEvents(start, end, this.props.id)
-            .then(events =>
-                events.map(function (event) {
-                    return {
-                        id: event.id,
-                        title: event.booker.username + ": " + event.bookableItem.name,
-                        start: event.dateFrom,
-                        end: event.dateTo,
-                        editable: event.editable,
-                        booker: event.booker,
-                        bookableItem: event.bookableItem,
-                        backgroundColor: event.bookableItem.color
-                    };
-                }))
-            .then(events => callback(events));
-        AdminPageController.getClosedPeriodsByType(this.props.id, start, end)
-            .then(res => this.showClosedPeriods(res));
-
-    }
-
-    showClosedPeriods = (periods) => {
-        var closedPeriods = periods.map(p =>
-            <Message key={Guid.create()}
-                type={"info"}
-                message={"Bookings are not possible in the period from " + 
-                Helper.formatDate(p.start, "mmmm dS, yyyy") + " to " + 
-                Helper.formatDate(p.end, "mmmm dS, yyyy")}/>
-        );
-        this.setState({
-            closedPeriods: closedPeriods
+        extendObservable(this, {
+            currentDate: new Date(),
+            selectedStartDate: new Date(),
+            selectedEndDate: new Date(),
+            currentModal: null,
+            currentBooking: null,
+            currentView: this.views.MONTH
         })
     }
 
-    eventAllow = (dropLocation, draggedEvent) => {
-        return LoginController.isLoggedIn() && !(draggedEvent.start < new Date());
+    onNavigate = (date, view, action) => {
+        this.currentDate = date;
     }
 
-    onEventDrop = (event, delta, revertFunc, jsEvent, ui, view) => {
-        //time is updated automatically
-        if (!confirm("Are you sure you want to move the booking to " + event.start.format())) {
-            revertFunc();
+    onView = (view) => {
+        this.currentView = view;
+    }
+
+    onSelectSlot = (selection) => {
+        if(selection.action === 'click' && this.currentView !== this.views.DAY){
+            transaction(() => {
+                this.currentDate = selection.start;
+                this.currentView = this.views.DAY;
+            });
             return;
         }
-
-        BookingController.updateBooking(event, function (response, err) {
-            if (err) {
-                revertFunc();
-            }
-        })
-    }
-
-    handleOnDayClick = (date, var1, var2, var3) => {
-        this.calendar.gotoDay(date);
-    }
-
-    onSelect = (start, end, jsEvent, view) => {
-        var fromTime = start.hours() * 3600 + start.minutes() * 60;
-        var toTime = end.hours() * 3600 + end.minutes() * 60;
-
-        this.setState({
-            fromDate: start.format(),
-            toDate: end.format(),
-            fromTime: fromTime,
-            toTime: toTime
-        })
-    }
-
-    handleOnEventClick = (event) => {
-        BookingController.viewBooking(event, this.props.id);
-    }
-
-    createBooking = (event) => {
-        event.preventDefault();
-        this.setState({
-            bookingBtnPressed: true
-        });
-        var fromDate = Number(new Date(this.state.fromDate)) + Number(this.state.fromTime) * 1000;
-        var toDate = Number(new Date(this.state.toDate)) + Number(this.state.toTime) * 1000;
-        if (this.bookableItems) {
-            var itemsList = [];
-            this.bookableItems.forEach(item =>
-                itemsList.push({
-                    bookableItem: item.object, // get the object instead of the select element
-                    dateFrom: new Date(fromDate).toJSON(),
-                    dateTo: new Date(toDate).toJSON(),
-                }));
-
-            BookingController.createMultipleBookings(itemsList)
-                .then(res => {
-                    this.setState({
-                        bookingBtnPressed: false
-                    });
-                    this.updateEvents();
-                });
-        } else {
-            MessageController.addInfoMessage("No bookable item selected");
-            this.setState({
-                bookingBtnPressed: false
-            });
+        if (!SecurityStore.isLoggedIn) {
+            toast.info(LanguageStore.INFO_BOOKING_CREATE_LOGIN_REQUIRED);
+            return;
         }
-    }
-
-    setToDate = (date) => {
-        this.setState({
-            toDate: date
+        //action, start, end, slots(array of dates)
+        transaction(() => {
+            this.selectedStartDate = selection.start;
+            this.selectedEndDate = selection.end;
+            this.currentModal = this.modals.CREATE_BOOKING;
         });
     }
 
-    setToTime = (time) => {
-        this.setState({
-            toTime: time
-        });
+    onSelectEvent = (booking, evt) => {
+        if (!SecurityStore.isLoggedIn) {
+            toast.info(LanguageStore.INFO_BOOKING_UPDATE_LOGIN_REQUIRED);
+            return;
+        }
+        if (SecurityStore.user.id !== booking.booker.id) {
+            toast.info(LanguageStore.INFO_BOOKING_OWNED_BY_OTHER_USER);
+            return;
+        }
+        this.currentBooking = booking;
+        this.currentModal = this.modals.EDIT_BOOKING;
     }
 
-    setFromDate = (date) => {
-        this.setState({
-            fromDate: date
-        });
+    onSelecting = ({start, end}) => {
+        console.log(start + " - " + end);
+        /*
+        if(!SecurityStore.isLoggedIn)
+        transaction(() => {
+            this.selectedStartDate = start;
+            this.selectedEndDate = end;
+            this.currentModal = this.modals.CREATE_BOOKING;
+        });*/
+        return true;
     }
 
-    setFromTime = (time) => {
-        this.setState({
-            fromTime: time
-        });
+    timeFormat = (date, culture, localizer) => {
+        return localizer.format(date, 'HH:mm');
     }
 
-    setBookableItems = (bookableItems) => {
-        event.preventDefault();
-        this.bookableItems = bookableItems;
+    timeRangeFormat = ({start, end}, culture, localizer) => {
+        return this.timeFormat(start, culture, localizer) + ' - ' + this.timeFormat(end, culture, localizer);
+    }
+
+    dateFormat = (date, culture, localizer) => {
+        return localizer.format(date, "DD. MMMM YYYY");
+    }
+
+    dateRangeFormat = ({start, end}, culture, localizer) => {
+        return this.dateFormat(start, culture, localizer) + ' - ' + this.dateFormat(end, culture, localizer);
+    }
+
+    dayFormat = (date, culture, localizer) => {
+        return '';
+        //return localizer.format(date, 'DDD', culture);
+    }
+
+    eventPropGetter = (event, start, end, isSelected) => {
+        return {
+            style: {
+                backgroundColor: event.color,
+                borderRadius: '0px',
+                /* opacity: 0.8,*/
+                color: 'black',
+                border: '1px solid black',
+                borderColor: 'rgba(0,0,0,0.2)',
+                display: 'block'
+            }
+        };
+
     }
 
     render() {
+        const {bookings} = this.props.bookingStore;
+        const {isLoggedIn} = SecurityStore;
+        const {
+            CALENDAR_AGENDA, CALENDAR_ALLDAY,
+            CALENDAR_DATE, CALENDAR_DAY, CALENDAR_EVENT, CALENDAR_MONTH,
+            CALENDAR_NEXT, CALENDAR_PREVIOUS, CALENDAR_SHOWMORE,
+            CALENDAR_TIME, CALENDAR_TODAY, CALENDAR_WEEK, language
+        } = LanguageStore;
+        const messages = {
+            allDay: CALENDAR_ALLDAY,
+            previous: <Glyphicon glyph='chevron-left' />,
+            next: <Glyphicon glyph='chevron-right' />,
+            today: <Glyphicon glyph='screenshot'/>,
+            month: CALENDAR_MONTH,
+            week: CALENDAR_WEEK,
+            day: CALENDAR_DAY,
+            agenda: CALENDAR_AGENDA,
+            date: CALENDAR_DATE,
+            time: CALENDAR_TIME,
+            event: CALENDAR_EVENT,
+            showMore: (num) => {
+                return CALENDAR_SHOWMORE + " +" + num;
+            }
+        }
         return (
 
-            <div>
-                {this.state.closedPeriods}
-                <div id={"calendarform" + this.props.id}>
-                    {this.state.calendarComponent}
-                </div>
-                {
-                    this.state.showForm ?
-                        <form id={this.props.id + "form"} className="col-xs-12">
-                            <div className="row control-component">
+            <div style={{height: 'calc(100vh - 100px)'}}>
+                {(this.currentModal === this.modals.CREATE_BOOKING) &&
+                <CreateBooking bookableItemStore={StoreRegistry.getBookableItemStore()}
+                               defaultFrom={this.selectedStartDate} defaultTo={this.selectedEndDate}
+                               onExit={() => this.currentModal = null}/>}
+                {(this.currentModal === this.modals.EDIT_BOOKING) &&
+                <EditBooking bookableItemStore={StoreRegistry.getBookableItemStore()}
+                             booking={this.currentBooking}
+                             onExit={() => this.currentModal = null}/>}
 
-                                <div className="col-sm-3 col-xs-6">
-                                    <label htmlFor={this.fromDateId} className="control-label">from date:</label>
-                                    <SelectDate
-                                        onChange={this.setFromDate}
-                                        date={this.state.fromDate}
-                                        id={this.fromDateId} />
-                                </div>
-                                <div className="col-sm-3 col-xs-6">
-                                    <label htmlFor={this.fromTimeId} className="control-label">from time:</label>
-                                    <SelectTime
-                                        onChange={this.setFromTime}
-                                        time={this.state.fromTime}
-                                        id={this.fromTimeId} />
+                <BigCalendar
+                    onView={this.onView}
+                    view={this.currentView}
+                    messages={messages}
+                    date={this.currentDate}
+                    formats={{
+                        dateFormat: 'DD',
+                        timeGutterFormat: this.timeFormat,
+                        selectRangeFormat: this.timeRangeFormat,
+                        dayFormat: this.dayFormat,
+                        dayRangeHeaderFormat: this.dateRangeFormat,
+                        eventTimeRangeFormat: this.timeRangeFormat,
+                        eventTimeRangeStartFormat: this.timeFormat,
+                        eventTimeRangeEndFormat: this.timeFormat
 
-                                </div>
+                    }}
+                    culture={language}
+                    popup={true}
+                    events={bookings.toJSON()}
+                    onNavigate={this.onNavigate}
+                    onSelectSlot={this.onSelectSlot}
+                    onSelectEvent={this.onSelectEvent}
+                    onSelecting={this.onSelecting}
+                    views={['month', 'day']}
+                    selectable={true}
+                    step={30}
+                    min={new Date(0, 1, 1, 10)}
+                    max={new Date(0, 1, 1, 22)}
 
-                                <div className="col-sm-3 col-xs-6">
-                                    <label htmlFor={this.toDateId} className="control-label">to date:</label>
-
-                                    <SelectDate
-                                        onChange={this.setToDate}
-                                        date={this.state.toDate}
-                                        id={this.toDateId} />
-                                </div>
-                                <div className="col-sm-3 col-xs-6">
-                                    <label htmlFor={this.toTimeId} className="control-label">to time:</label>
-                                    <SelectTime
-                                        onChange={this.toTime}
-                                        time={this.state.toTime}
-                                        id={this.toTimeId} />
-                                </div>
-
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-3 col-xs-6 form-group">
-                                    <Select required
-                                        key={"bookableItem-" + this.props.id}
-                                        placeholder="Select"
-                                        options={this.state.bookableItems}
-                                        onChange={this.setBookableItems} />
-                                </div>
-                                <div className="col-sm-3 col-xs-6 form-group">
-                                    {
-                                        this.state.bookingBtnPressed ?
-                                            <button disabled id="bookBtn" className="btn btn-default btn-block">Booking...</button> :
-                                            <button id="bookBtn" className="btn btn-default btn-block" onClick={this.createBooking}>Book</button>
-                                    }
-                                </div>
-                            </div>
-                        </form> :
-                        <div>Log in to make a booking</div>
-                }
+                    eventPropGetter={this.eventPropGetter}
+                />
+                {isLoggedIn && <FloatingBtn onClick={() => this.currentModal = this.modals.CREATE_BOOKING}/>}
             </div>
 
         );
     }
 }
 
+/*startAccessor='startDate'
+endAccessor='endDate'*/
+export default observer(BookingCalendar);
+
+BookingCalendar.propTypes = {
+    bookingStore: PropTypes.instanceOf(BookingController)
+}
+
+const Event = ({event}) => {
+    //debugger;
+    return (
+        <span style={{backgroundColor: 'red'}}>
+      <strong>{event.title}</strong>
+            {event.desc && ':  ' + event.desc}
+    </span>
+    )
+}
+
+/*
+view: 'month',
+  events: [],
+  selectable: true,
+  header: {
+    left: 'agendaDay,basicWeek,month',
+    center: 'title',
+    right: 'today prev,next',
+  },
+  customButtons: {},
+  defaultDate: null,
+  nowIndicator: true,
+  locale: 'en-gb',
+  eventStartEditable: true,
+  eventDurationEditable: true,
+ */
 
 // Data Types: 	event - {title, id, start, (end), whatever } 	location - {
 // start, (end), allDay } 	rawEventRange - { start, end } 	eventRange - { start,

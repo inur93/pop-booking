@@ -1,15 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Api from '../../shared/RestApi';
 import Helper from '../../shared/HelperFunctions';
 import 'jquery';
-
 //controllers
-import MessageController from '../../controllers/MessageController';
 import AdminController from '../../controllers/AdminPageController';
-
 //components
-import { SelectBookable, SelectDate } from '../shared/BookingComponents';
 import ClosedPeriod from './ClosedPeriod';
 
 

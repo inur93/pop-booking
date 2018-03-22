@@ -1,15 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
-import { SelectBookable, SelectDate } from '../shared/BookingComponents';
-import Helper from '../../shared/HelperFunctions';
 import 'jquery';
-import 'bootstrap/dist/js/bootstrap.min.js';
-import { ChromePicker } from 'react-color';
-import { Select } from '../shared/Select';
-
 //controllers
-import AdminController from '../../controllers/AdminPageController';
 
 
 export default class ClosedPeriod extends React.Component {
@@ -261,19 +252,19 @@ export default class ClosedPeriod extends React.Component {
                         this.state.old_name}
                 </td>
 
-                <td onClick={this.setEditMode} >
+               {/* <td onClick={this.setEditMode} >
                     {this.state.editMode ?
                         <SelectDate date={this.state.start} onChange={this.onStartChanged} /> :
                         Helper.getDateAsString(this.state.old_start)
                     }
-                </td>
-                <td onClick={this.setEditMode} >
+                </td>*/}
+               {/* <td onClick={this.setEditMode} >
                     {this.state.editMode ?
                         <SelectDate date={this.state.end} onChange={this.onEndChanged} /> :
                         Helper.getDateAsString(this.state.old_end)
                     }
-                </td>
-                <td onClick={this.setEditMode}> {this.state.editMode ?
+                </td>*/}
+              {/*  <td onClick={this.setEditMode}> {this.state.editMode ?
 
                     <Select key={"0" + this.props.id}
                         placeholder="Select types"
@@ -281,9 +272,9 @@ export default class ClosedPeriod extends React.Component {
                         options={this.props.typeOptions}
                         onChange={this.onTypesChanged} />
                     : this.typeListToString(this.state.old_applicableToTypes)}
-                </td>
+                </td>*/}
 
-                <td onClick={this.setEditMode}> {this.state.editMode ?
+               {/* <td onClick={this.setEditMode}> {this.state.editMode ?
 
                     <Select key={"1" + this.props.id}
                         placeholder="Select items"
@@ -292,7 +283,7 @@ export default class ClosedPeriod extends React.Component {
                         onChange={this.onItemsChanged} />
                     : this.itemListToString(this.state.old_applicableToItems)
                 }
-                </td>
+                </td>*/}
 
                 <td>
                     {this.state.dirty && this.state.editMode &&

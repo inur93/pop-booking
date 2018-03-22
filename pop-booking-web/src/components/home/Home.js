@@ -1,128 +1,74 @@
 import React from 'react';
 import '../../stylesheets/css/App.css';
-
 //components
-import Helper from '../../shared/HelperFunctions';
-import MyBookings from './MyBookings';
 import EventPost from './EventPost';
-
 //controllers
 import PostsController from '../../controllers/PostsController';
-import LoginController from '../../controllers/LoginController';
-import MainController from '../../controllers/MainController';
-import { Select } from '../shared/Select';
+import BookingList from "./BookingList";
+import {extendObservable} from 'mobx';
+import {Button, FormControl, FormGroup} from "react-bootstrap";
+import {observer} from "mobx-react";
+import PropTypes from 'prop-types';
+import SecurityStore from "../../controllers/SecurityStore";
+import Spinner from "../../shared/Spinner";
+import LanguageStore from "../../controllers/LanguageStore";
 
-export default class Home extends React.Component {
+class Home extends React.Component {
 
-    posts = [];
+
     bookings = [];
     createPostForm = "textarea-create-post";
     createPostTextArea = "post-content";
+    postContent;
+
+    sendError;
     constructor(props) {
         super(props);
-        this.state = {
-            posts: [],
+        extendObservable(this, {
             postsLoading: true,
-            showBookings: props.showBookings
-        }
-    }
-
-    componentDidMount() {
-        this.updatePosts();
-    }
-
-    updatePosts = () => {
-        this.setState({
-            postsLoading: true
+            postContent: "",
+            sendError: false
         })
-        PostsController.getPosts().then(newPosts => {
-            newPosts.forEach(x => this.posts.push(x));
-            const posts = this.posts.map(p => {
 
-                return this.createPostJsx(p);
-            });
-            this.setState({
-                posts: posts,
-                postsLoading: false
-            });
-        });
-    }
-
-    removePost = (id) => {
-        if (!id) return;
-        PostsController.remove(id)
-            .then(res => {
-                var posts = this.state.posts;
-                posts = posts.filter(el => el.props.id !== id);
-                this.setState(
-                    {
-                        posts: posts
-                    }
-                )
-            })
-    }
-
-    createPostJsx = (post) => {
-        var userId = LoginController.getUserId();
-        //convert to local time
-        var cur = new Date(post.created);
-        cur.setMinutes(cur.getMinutes() - new Date().getTimezoneOffset());
-        post.created = cur.getTime();
-        return <EventPost
-            post={post}
-            key={post.id}
-            id={post.id}
-            onRemove={this.removePost}
-            removable={
-                post && post.createdBy &&
-                post.createdBy.id === userId} />;
     }
 
     createPost = () => {
-        event.preventDefault();
-        var serialize = require('form-serialize');
-        var form = document.querySelector('#' + this.createPostForm);
-        var data = serialize(form, { hash: true });
-        if (data.post) {
-            PostsController.create(data.post)
-                .then(item => {
-                    var posts = this.state.posts;
-                    posts.push(this.createPostJsx(item));
-                    this.setState({
-                        posts: posts
-                    })
-                    var el = document.getElementById(this.createPostTextArea);
-                    if (el) el.value = '';
-                });
-        }
+        this.sendError = false;
+       this.props.postStore.create(this.postContent)
+           .then(() => this.postContent = "")
+           .catch(() => this.sendError = true);
     }
 
     render() {
-        return (
-            <div>
-                <MyBookings showBookings={this.state.showBookings} />
-                <div>
-                    <h2>Posts</h2>
-                </div>
-                {this.state.postsLoading ?
-                    <div className="loader"> </div> :
-                    this.state.posts
-                }
-                {!this.state.postsLoading && this.state.posts.length == 0 &&
-                    <div>No posts</div>
-                }
-                {this.state.showBookings &&
-                    <form id={this.createPostForm}>
-                        <textarea id={this.createPostTextArea} name="post" className="form-control" placeholder="Write post..." rows="3">
-                        </textarea>
-                        <div className="form-group">
-                            <input type="button" name="submit" className="btn btn-primary pull-right" onClick={this.createPost} value="Post" />
-                        </div>
-                    </form>
-                }
+        const {posts, isLoading, error, getPosts} = this.props.postStore;
+        const {isLoggedIn, isAdmin} = SecurityStore;
 
+        const {POSTS_TITLE, HOME_WRITE_POST, BTN_POST, BTN_RETRY} = LanguageStore;
+        return (
+            <div style={{padding: '15px'}}>
+                <BookingList bookings={[]}/>
+                <div>
+                    <h2>{POSTS_TITLE}</h2>
+                </div>
+                {<Spinner show={isLoading} error={error} retryFunc={getPosts}/>}
+                {!isLoading && posts.map(p => <EventPost post={p} key={p.id}/>)}
+
+                {isAdmin &&
+                <FormGroup>
+                    <FormControl componentClass="textarea" value={this.postContent}
+                                 onChange={(evt) => this.postContent = evt.target.value} placeholder={HOME_WRITE_POST}/>
+                </FormGroup>
+                }
+                {isAdmin &&
+                <Button onClick={this.createPost} disabled={!this.postContent} bsStyle="primary"
+                        className="pull-right">{this.sendError ? BTN_RETRY : BTN_POST}</Button>
+                }
             </div>
         );
     }
+}
+export default observer(Home);
+Home.propTypes = {
+    postStore: PropTypes.instanceOf(PostsController)
 }
 

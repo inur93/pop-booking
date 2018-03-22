@@ -1,10 +1,6 @@
 package dk.knet.pop.booking.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +18,8 @@ public class BookableItem {
 	
 	private String name;
 	private BookingType bookingType;
-	private String color;	
-	
+	private String color;
 
+	@Column(nullable = false)
+	private int maxBookableHours;
 }
