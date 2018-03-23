@@ -11,7 +11,7 @@ import {observer} from "mobx-react";
 import PropTypes from 'prop-types';
 import SecurityStore from "../../controllers/SecurityStore";
 import Spinner from "../../shared/Spinner";
-import LanguageStore from "../../controllers/LanguageStore";
+import LanguageStore, {D} from "../../controllers/LanguageStore";
 
 class Home extends React.Component {
 
@@ -43,12 +43,11 @@ class Home extends React.Component {
         const {posts, isLoading, error, getPosts} = this.props.postStore;
         const {isLoggedIn, isAdmin} = SecurityStore;
 
-        const {POSTS_TITLE, HOME_WRITE_POST, BTN_POST, BTN_RETRY} = LanguageStore;
         return (
             <div style={{padding: '15px'}}>
                 <BookingList bookings={[]}/>
                 <div>
-                    <h2>{POSTS_TITLE}</h2>
+                    <h2>{D('Posts')}</h2>
                 </div>
                 {<Spinner show={isLoading} error={error} retryFunc={getPosts}/>}
                 {!isLoading && posts.map(p => <EventPost post={p} key={p.id}/>)}
@@ -56,12 +55,12 @@ class Home extends React.Component {
                 {isAdmin &&
                 <FormGroup>
                     <FormControl componentClass="textarea" value={this.postContent}
-                                 onChange={(evt) => this.postContent = evt.target.value} placeholder={HOME_WRITE_POST}/>
+                                 onChange={(evt) => this.postContent = evt.target.value} placeholder={D('Write a post')}/>
                 </FormGroup>
                 }
                 {isAdmin &&
                 <Button onClick={this.createPost} disabled={!this.postContent} bsStyle="primary"
-                        className="pull-right">{this.sendError ? BTN_RETRY : BTN_POST}</Button>
+                        className="pull-right">{this.sendError ? D('Retry') : D('Post')}</Button>
                 }
             </div>
         );

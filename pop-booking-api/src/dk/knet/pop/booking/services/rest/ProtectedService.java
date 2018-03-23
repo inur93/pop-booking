@@ -76,10 +76,11 @@ public abstract class ProtectedService {
 		
 	}
 	
-	protected void setHeaders(BookingUser user) {
+	protected String setHeaders(BookingUser user) {
 		String jwtToken = JWTHandler.getInstance().createJWT(user, LOGIN_DURATION );
 		response.setHeader("Authorization", "Bearer2 " + jwtToken);
 		response.setDateHeader("TokenTimeout", new Date().getTime()+LOGIN_DURATION);
+		return jwtToken;
 	}
 
 }

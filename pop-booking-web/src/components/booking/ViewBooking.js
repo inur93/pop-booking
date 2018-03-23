@@ -12,7 +12,7 @@ import ReactUploadFile from 'react-upload-file';
 //controllers
 import MessageController from '../../controllers/MessageController';
 import BookingController from '../../controllers/BookingController';
-import LanguageStore from "../../controllers/LanguageStore";
+import LanguageStore, {D} from "../../controllers/LanguageStore";
 
 export default class ViewBooking extends React.Component {
 
@@ -131,7 +131,7 @@ export default class ViewBooking extends React.Component {
         return (
             <div>
                 <div className="form-group">
-                    <label>Booker:</label><p>{this.props.booking.booker.name || this.props.booking.booker.username}</p>
+                    <label>{D('Booker')}:</label><p>{this.props.booking.booker.name || this.props.booking.booker.username}</p>
 
                 </div>
                 <div className="form-group">
@@ -139,14 +139,14 @@ export default class ViewBooking extends React.Component {
                         this.state.editMode ?
                             <div>
                                 <div>
-                                    <label>from date:</label>
+                                    <label>{D('from date')}:</label>
                                     <SelectDate
                                         onChange={this.setFromDate}
                                         date={this.state.fromDate}
                                         id={this.fromDateId} />
                                 </div>
                                 <div>
-                                    <label>from time:</label>
+                                    <label>{D('from time')}:</label>
                                     <SelectTime
                                         onChange={this.setFromTime}
                                         id={this.fromTimeId}
@@ -155,7 +155,7 @@ export default class ViewBooking extends React.Component {
                             </div>
                             :
                             <div >
-                                <label>From</label>
+                                <label>{D('from')}</label>
                                 <p>{Helper.getDateAsStringAndFormat(this.state.start)}</p>
                             </div>
                     }
@@ -165,14 +165,14 @@ export default class ViewBooking extends React.Component {
                         this.state.editMode ?
                             <div>
                                 <div>
-                                    <label>to date:</label>
+                                    <label>{D('to date')}:</label>
                                     <SelectDate
                                         onChange={this.setToDate}
                                         date={this.state.toDate}
                                         id={this.toDateId} />
                                 </div>
                                 <div>
-                                    <label>to time:</label>
+                                    <label>{D('to time')}:</label>
                                     <SelectTime
                                         onChange={this.setToTime}
                                         id={this.toTimeId}
@@ -181,7 +181,7 @@ export default class ViewBooking extends React.Component {
                             </div>
                             :
                             <div >
-                                <label>To</label>
+                                <label>{D('to')}</label>
                                 <p>{Helper.getDateAsStringAndFormat(this.state.end)}</p>
                             </div>
                     }
@@ -190,9 +190,9 @@ export default class ViewBooking extends React.Component {
                 <div className="form-group">
                     {
                         this.state.editMode ?
-                            <SelectBookable selected={this.state.bookableItem} onChange={this.setBookableItem} id={this.props.booking.bookableItem.bookingType} label="Unit:" /> :
+                            <SelectBookable selected={this.state.bookableItem} onChange={this.setBookableItem} id={this.props.booking.bookableItem.bookingType} label={D('Unit') + ":"} /> :
                             <div>
-                                <label>Unit</label>
+                                <label>{D('Unit')}</label>
                                 <p>{this.state.bookableItem}</p>
                             </div>
                     }

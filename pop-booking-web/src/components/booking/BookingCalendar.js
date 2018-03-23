@@ -12,7 +12,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import CreateBooking from "./CreateBooking";
 import StoreRegistry from "../../controllers/StoreRegistry";
 import EditBooking from "./EditBooking";
-import LanguageStore from "../../controllers/LanguageStore";
+import LanguageStore, {D} from "../../controllers/LanguageStore";
 import SecurityStore from "../../controllers/SecurityStore";
 import {toast} from 'react-toastify';
 import {Glyphicon} from "react-bootstrap";
@@ -146,26 +146,21 @@ class BookingCalendar extends React.Component {
     render() {
         const {bookings} = this.props.bookingStore;
         const {isLoggedIn} = SecurityStore;
-        const {
-            CALENDAR_AGENDA, CALENDAR_ALLDAY,
-            CALENDAR_DATE, CALENDAR_DAY, CALENDAR_EVENT, CALENDAR_MONTH,
-            CALENDAR_NEXT, CALENDAR_PREVIOUS, CALENDAR_SHOWMORE,
-            CALENDAR_TIME, CALENDAR_TODAY, CALENDAR_WEEK, language
-        } = LanguageStore;
+        const { language} = LanguageStore;
         const messages = {
-            allDay: CALENDAR_ALLDAY,
+            allDay: D('All day'),
             previous: <Glyphicon glyph='chevron-left' />,
             next: <Glyphicon glyph='chevron-right' />,
             today: <Glyphicon glyph='screenshot'/>,
-            month: CALENDAR_MONTH,
-            week: CALENDAR_WEEK,
-            day: CALENDAR_DAY,
-            agenda: CALENDAR_AGENDA,
-            date: CALENDAR_DATE,
-            time: CALENDAR_TIME,
-            event: CALENDAR_EVENT,
+            month: D('Month'),
+            week: D('Week'),
+            day: D('Day'),
+            agenda: D('Agenda'),
+            date: D('Date'),
+            time: D('Time'),
+            event: D('Event'),
             showMore: (num) => {
-                return CALENDAR_SHOWMORE + " +" + num;
+                return D('Show more') + " +" + num;
             }
         }
         return (

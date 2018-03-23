@@ -33,7 +33,7 @@
 		<!-- Auto create empty schema on every application start, DISABLE in production -->
 		<!-- READ https://docs.jboss.org/hibernate/orm/5.0/manual/en-US/html/ch03.html 
 			for values -->
-		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.hbm2ddl.auto">create-drop</property>
 
 		<!-- Just update schema with changes on application start, DISABLE in production -->
 		<!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

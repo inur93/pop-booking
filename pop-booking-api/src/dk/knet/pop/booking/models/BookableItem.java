@@ -21,5 +21,5 @@ public class BookableItem {
 	private String color;
 
 	@Column(nullable = false)
-	private int maxBookableHours;
+	private Integer maxBookableHours;
 }

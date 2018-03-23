@@ -1,111 +1,56 @@
 import SecurityStore from "../controllers/SecurityStore";
-import LanguageStore from "../controllers/LanguageStore";
+import LanguageStore, {D} from "../controllers/LanguageStore";
+import {toast} from 'react-toastify';
+
+import superagentPromise from 'superagent-promise';
+import _superagent from 'superagent';
+
+const superagent = superagentPromise(_superagent, global.Promise);
+const BASE_URL = process.env.REACT_APP_API_HOST;
+
+
+const token = req => SecurityStore.token && req.set('Authorization', `Bearer ${SecurityStore.token}`);
+const getResponseBody = res => res.body;
+
+const handleErrors = err => {
+    if(err && !err.status){
+        toast.error(D("No internet connection"));
+    }
+    if (err && err.response && (err.response.status === 401 || err.response.status === 403)) {
+        SecurityStore.logout();
+    }
+
+    return err;
+}
 
 
 class RestClient {
 
-
-    constructor(baseUrl = '', {headers = {}, devMode = false, simulatedDelay = 0} = {}) {
-        baseUrl = process.env.REACT_APP_API_HOST;
-        if (!baseUrl) throw new Error('missing baseUrl');
-        this.headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'charset': 'utf-8',
-            /* 'pragma': 'no-cache',
-             'cache-control': 'no-cache'*/
-        };
-        Object.assign(this.headers, headers);
-        this.baseUrl = baseUrl;
-        this.simulatedDelay = simulatedDelay;
-        this.devMode = devMode;
+    static getUrl(route) {
+        return `${BASE_URL}${route}`;
     }
 
-    _simulateDelay() {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve();
-            }, this.simulatedDelay);
-        });
+    static _fetch(agent) {
+        return agent
+            .use(token)
+            .end(handleErrors)
+            .then(getResponseBody);
     }
 
-    _fullRoute(url) {
-        return `${this.baseUrl}${url}`;
+    GET (route){
+        return RestClient._fetch(superagent.get(RestClient.getUrl(route)));
     }
 
-    _fetch(route, method, body, isQuery = false, contentType, noCache = false) {
-
-        if (!route) throw new Error('Route is undefined');
-        if (contentType) this.headers.contentType = contentType;
-        var fullRoute = this._fullRoute(route);
-        if (isQuery && body) {
-            var qs = require('qs');
-            const query = qs.stringify(body);
-            fullRoute = `${fullRoute}?${query}`;
-            body = undefined;
-        }
-        var authToken = SecurityStore.token;
-        if (authToken) {
-            Object.assign(this.headers, {'Authorization': 'Bearer ' + authToken});
-        }
-        let opts = {
-            method,
-            headers: this.headers
-        };
-        if (body) {
-            Object.assign(opts, {body: JSON.stringify(body)});
-        }
-
-
-        const fetchPromise = () => fetch(fullRoute, opts);
-
-        if (this.devMode && this.simulatedDelay > 0) {
-            // Simulate an n-second delay in every request
-            return this._simulateDelay()
-                .then(() => fetchPromise())
-                .then(response => response.json());
-        } else {
-            return fetchPromise()
-                .then(response => {
-                        let auth = response.headers.get("Authorization");
-                        if (auth) {
-                            auth = auth.replace("Bearer2 ", "");
-                            SecurityStore.token = auth;
-                        }
-
-                        //empty response
-                        if(response.status === 204) return;
-                        if(response.status === 200) return response.json();
-                        switch(response.status){
-                            case 204: return; //empty response
-                            case 200:
-                            case 201: return response.json();
-                            case 403:
-                            default:
-                                return response.json().then(json => {
-                                    throw new Error(LanguageStore[json.message] || json.msg);
-                                })
-                        }
-                    }
-                );
-        }
-
+    POST(route, body) {
+        return RestClient._fetch(superagent.post(RestClient.getUrl(route), body));
     }
 
-    GET(route, query, noCache) {
-        return this._fetch(route, 'GET', query, true, noCache);
+    PUT(route, body) {
+        return RestClient._fetch(superagent.put(RestClient.getUrl(route), body));
     }
 
-    POST(route, body, noCache) {
-        return this._fetch(route, 'POST', body, noCache);
-    }
-
-    PUT(route, body, contentType, noCache) {
-        return this._fetch(route, 'PUT', body, contentType, noCache);
-    }
-
-    DELETE(route, query, noCache) {
-        return this._fetch(route, 'DELETE', query, true, noCache);
+    DELETE(route) {
+        return RestClient._fetch(superagent.del(RestClient.getUrl(route)));
     }
 }
 
