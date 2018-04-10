@@ -27,6 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JWTHandler {
 
+	/**
+	 * This key is used in debug mode. In production the key will be generated each time the application restarts.
+	 */
 	private static String defaultKeyBase64 = "5iAdBqSDrmqihDqY5o92c96CYzuyi6QMjlknh3ZxjMsdi7TK9SCu9Nq9Jt21cHz";
 
 	private static JWTHandler handler;
@@ -71,7 +74,7 @@ public class JWTHandler {
 		return Jwts.builder()
 				.claim("user", viewUser)
 				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis()+loginDuration*1000))
+				.setExpiration(new Date(System.currentTimeMillis()+loginDuration))
 				.signWith(alg, getSecretKey())
 				.compact();
 

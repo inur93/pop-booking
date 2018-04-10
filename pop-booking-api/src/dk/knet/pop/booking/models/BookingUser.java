@@ -34,6 +34,7 @@ public class BookingUser {
 	private String name;
 	private String username;
 
+	@JsonIgnore
 	private String password;
 	
 
@@ -49,7 +50,7 @@ public class BookingUser {
 	
 	@Override
 	public String toString() {
-		return "id=" + id + ";name=" + username + ";password=" + password + ";isActive=" + isUserActive + ";roles=" + roles;
+		return "id=" + id + ";name=" + username + ";isActive=" + isUserActive + ";roles=" + roles;
 	}
 
 }

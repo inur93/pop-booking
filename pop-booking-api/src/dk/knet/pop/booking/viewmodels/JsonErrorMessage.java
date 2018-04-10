@@ -1,4 +1,4 @@
-package dk.knet.pop.booking.models;
+package dk.knet.pop.booking.viewmodels;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

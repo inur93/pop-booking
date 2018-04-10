@@ -6,6 +6,7 @@ import java.util.Set;
 
 import dk.knet.pop.booking.database.UserDAO;
 import dk.knet.pop.booking.exceptions.BasicException;
+import dk.knet.pop.booking.exceptions.InvalidArgsException;
 import dk.knet.pop.booking.filters.SecureEndpoint;
 import dk.knet.pop.booking.models.BookingUser;
 import dk.knet.pop.booking.models.Role;
@@ -47,11 +48,22 @@ public class UserController {
 				shouldUpdate(localUser);
 		if(update){
 			KnetUser knetUser = knet.getUserByUsername(username);
+			//if knetuser is null - it is most likely because the user has been deleted - thus we disable the user
+			if(knetUser == null){
+				if(localUser != null){
+					return disableUser(localUser);
+				}else{
+					return null; // no user found with given username
+				}
+
+			}
 			KnetVlan vlan = knet.getUserVlan(knetUser.getVlan());
 			if(localUser == null){
 				BookingUser user = convertToBookingUser(knetUser, vlan);
 				try {
-					return dao.createUser(user);
+					if(user == null) throw new InvalidArgsException("User is was not found");
+					if(user.getUsername() == null || user.getPassword() == null) throw new InvalidArgsException("Username and password can't be null");
+					return dao.create(user);
 				} catch (BasicException e) {
 					e.printStackTrace();
 					return localUser;
@@ -59,14 +71,21 @@ public class UserController {
 			}else{
 				BookingUser user = mergeUsers(localUser, knetUser, vlan);
 				try {
-					return dao.updateUser(user);
+					if(user == null) throw new InvalidArgsException("User is was not found");
+					if(user.getUsername() == null || user.getPassword() == null) throw new InvalidArgsException("Username and password can't be null");
+					return dao.update(user);
 				} catch (BasicException e) {
-					e.printStackTrace();
+					log.warn("Could not merge users", e);
 					return localUser;
 				}
 			}
 		}
 		return localUser;
+	}
+
+	public BookingUser disableUser(BookingUser user){
+		user.setIsUserActive(false);
+		return dao.update(user);
 	}
 	
 	public boolean shouldUpdate(BookingUser user){
@@ -86,14 +105,12 @@ public class UserController {
 			Set<Role> roles = new HashSet<>();
 			roles.add(Role.DEFAULT);
 			existing.setRoles(roles);
+			existing.setRoomNo(vlan.getRoom());
+			existing.setName(newUser.getName());
 		}
 		existing.setLastUpdated(new Date());
 		existing.setPassword(newUser.getPassword());
 		existing.setVlan(vlan.getId());
-//		existing.setEmail(newUser.getEmail());
-//		newUser.getPhonenumber();
-		existing.setName(newUser.getName());
-		existing.setRoomNo(vlan.getRoom());
 		existing.setIsUserActive(vlan.getState() > 0 ? true : false);
 		
 		return existing;

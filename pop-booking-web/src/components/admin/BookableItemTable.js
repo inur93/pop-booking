@@ -8,8 +8,8 @@ import BookableItem from './EditBookableItem';
 
 //controllers
 import AdminController from '../../controllers/AdminPageController';
-import BookingController from '../../controllers/BookingController';
-import BookableObjectController from '../../controllers/BookableObjectsController';
+import BookingController from '../../controllers/BookingStore';
+import BookableObjectController from '../../controllers/BookableObjectsStore';
 
 export default class BookableItemTable extends React.Component {
 

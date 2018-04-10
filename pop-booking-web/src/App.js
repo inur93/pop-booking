@@ -1,153 +1,146 @@
 import React, {Component} from 'react';
 import {Col, Grid, MenuItem, Nav, Navbar, NavDropdown, NavItem, Row} from "react-bootstrap";
 import {observer} from 'mobx-react';
+import {computed, decorate, action, observable} from "mobx";
+
 import Home from "./components/home/Home";
-import {computed, extendObservable} from "mobx";
+
 import Login from "./components/login/Login";
-import SecurityStore from "./controllers/SecurityStore";
-import StoreRegistry from "./controllers/StoreRegistry";
 import BookingCalendar from "./components/booking/BookingCalendar";
-import LanguageStore, {D} from "./controllers/LanguageStore";
-import {ToastContainer, toast} from "react-toastify";
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
-import {LinkContainer, IndexLinkContainer} from 'react-router-bootstrap';
+import {D} from './D';
+import {ToastContainer} from "react-toastify";
+import {BrowserRouter as Router, Route, Switch, withRouter} from 'react-router-dom';
+import {IndexLinkContainer} from 'react-router-bootstrap';
+import MyProfile from "./components/login/MyProfile";
+import AdminPage from "./components/admin/AdminPage";
+import PropTypes from 'prop-types';
+import {stores} from "./controllers/Context";
+import SecurityStore from "./controllers/SecurityStore";
 
 class App extends Component {
 
-    uiStore;
+    pages = {
+        HOME: '/',
+        LOGIN: '/login',
+        CALENDAR: '/calendar',
+        ADMIN: '/admin'
+    }
+
+    showLogin = false;
+    showMyProfile = false;
 
     constructor(props) {
         super(props);
-        this.uiStore = new AppUiStore();
     }
 
 
     selectLanguage = (key) => {
-        switch (key) {
-            case 'language.da':
-                LanguageStore.language = 'da';
-                break;
-            case 'language.en':
-                LanguageStore.language = 'en';
-                break;
+        let value = key.split('.')[1];
+        this.props.stores.language.language = value;
+    }
+
+    editProfile = () => {
+        const res = this.props.stores.user.fetchCurrentUser();
+        if (res) {
+            res.then(user => {
+                this.showMyProfile = true;
+                return user;
+            })
         }
     }
 
-    handleLoginAndLogout = (event) => {
-        this.uiStore.login = true;
+    onLogin = (credentials) => {
+        return this.props.stores.security.login(credentials)
+            .then(res => {
+                this.showLogin = false;
+            })
     }
 
     render() {
-        const {activePage, pages, user, isLoggedIn, doLogin} = this.uiStore;
-        let page = null;
-        /*switch (activePage) {
-            case pages.HOME:
-                page = <Home postStore={StoreRegistry.getPostStore()}/>;
-                break;
-            case pages.CALENDAR:
-                page = <BookingCalendar bookingStore={StoreRegistry.getBookingStore()}/>;
-            case pages.PROFILE:
-
-            default :
-                console.log("page is under construction");
-
-        }*/
-
-        const {language} = LanguageStore;
-
+        const {pages} = this;
+        const {stores} = this.props;
+        const {language, languages} = stores.language;
+        const {user, isLoggedIn, isAdmin} = stores.security;
 
         return (
-            <Router>
-                <div>
-                    <Navbar collapseOnSelect>
-                        <Navbar.Header>
-                            <Navbar.Brand>
-                                <a href="#">
-                                    POP Booking
-                                </a>
-                            </Navbar.Brand>
-                            <Navbar.Toggle/>
-                        </Navbar.Header>
-                        <Navbar.Collapse>
-                            <Nav bsStyle="tabs">
-                                <IndexLinkContainer to='/'>
-                                    <NavItem eventKey={pages.HOME}>{D('Home')}</NavItem>
-                                </IndexLinkContainer>
-                                <IndexLinkContainer to={pages.CALENDAR}>
-                                    <NavItem eventKey={pages.CALENDAR}>{D('Calendar')}</NavItem>
-                                </IndexLinkContainer>
-                            </Nav>
-                            <Nav pullRight>
-                                {isLoggedIn &&
-                                <NavItem eventKey={pages.PROFILE}>
-                                    {user.username}
-                                </NavItem>
-                                }
-                                {!isLoggedIn ?
-                                    <NavItem eventKey={pages.LOGIN} onSelect={() => this.uiStore.doLogin = true}>
-                                        {D('Login')}
-                                    </NavItem> :
-                                    <NavItem eventKey={pages.LOGIN} onSelect={SecurityStore.logout}>{D('Log out')}</NavItem>
-                                }
-                                <NavDropdown eventKey={'language'} title={language} id="language-dropdown">
-                                    <MenuItem eventKey={'language.da'} onSelect={this.selectLanguage}>DA</MenuItem>
-                                    <MenuItem eventKey={'language.en'} onSelect={this.selectLanguage}>EN</MenuItem>
-                                </NavDropdown>
-                            </Nav>
-                        </Navbar.Collapse>
-                    </Navbar>
-                    <Grid>
-                        <Row>
-                            <Col xs={12} md={10} mdOffset={1} lg={8} lgOffset={2}>
-                                <Route exact path="/" render={() =>
-                                    <Home postStore={StoreRegistry.getPostStore()}/>
-                                }/>
-                                <Route path={pages.CALENDAR} render={() =>
-                                    <BookingCalendar bookingStore={StoreRegistry.getBookingStore()}/>
-                                }/>
-
-
-                            </Col>
-                            {this.uiStore.doLogin &&
-                            <Login history={history} onExit={() => this.uiStore.doLogin = false}
-                                   onLogin={this.uiStore.onLogin}/>
+            <div>
+                <Navbar collapseOnSelect inverse>
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            POP Booking
+                        </Navbar.Brand>
+                        <Navbar.Toggle/>
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav bsStyle="tabs">
+                            <IndexLinkContainer to='/'>
+                                <NavItem eventKey={pages.HOME}>{D('Home')}</NavItem>
+                            </IndexLinkContainer>
+                            <IndexLinkContainer to={pages.CALENDAR}>
+                                <NavItem eventKey={pages.CALENDAR}>{D('Calendar')}</NavItem>
+                            </IndexLinkContainer>
+                            {isAdmin &&
+                            <IndexLinkContainer to={pages.ADMIN}>
+                                <NavItem eventKey={pages.ADMIN}>{D('Administration')}</NavItem>
+                            </IndexLinkContainer>
                             }
-                        </Row>
-                    </Grid>
-                    <ToastContainer position='bottom-right' autoClose={8000}/>
-                </div>
-            </Router>
+                        </Nav>
+                        <Nav pullRight>
+                            {isLoggedIn &&
+                            <NavItem eventKey={pages.PROFILE} onSelect={this.editProfile}>
+                                {user.username}
+                            </NavItem>
+                            }
+                            {!isLoggedIn ?
+                                <NavItem eventKey={pages.LOGIN} onSelect={() => this.showLogin = true}>
+                                    {D('Login')}
+                                </NavItem> :
+                                <NavItem eventKey={pages.LOGIN}
+                                         onSelect={() => stores.security.logout(false)}>{D('Log out')}</NavItem>
+                            }
+                            <NavDropdown eventKey={'language'} title={language} id="language-dropdown">
+                                {languages.map(l => <MenuItem key={l.name}
+                                                              eventKey={'language.' + l.name}
+                                                              onSelect={this.selectLanguage}>{l.displayName}</MenuItem>)}
+                            </NavDropdown>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+                <Grid>
+                    <Row>
+                        <Col xs={12} md={10} mdOffset={1}>
+                            <Route exact path="/" render={() => <Home stores={stores}/>}/>
+                            <Route path={pages.CALENDAR} render={() => <BookingCalendar stores={stores}/>}/>
+                            <Route path={`${pages.ADMIN}`} render={() => <AdminPage stores={stores}/>}/>
+                        </Col>
+                        {this.showLogin &&
+                        <Login history={history} onExit={() => this.showLogin = false}
+                               onLogin={this.onLogin}/>
+                        }
+                        {this.showMyProfile &&
+                        <MyProfile onExit={() => this.showMyProfile = false}
+                                   user={stores.user.currentUser}
+                                   store={stores.user}/>
+                        }
+                    </Row>
+                </Grid>
+                <ToastContainer position='bottom-right' autoClose={8000}/>
+            </div>
         )
     }
 
 }
 
-export default observer(App);
+export default withRouter(observer(App));
 
-export class AppUiStore {
+decorate(App, {
+    selectLanguage: action,
+    showMyProfile: observable,
+    showLogin: observable
+});
 
-    pages = {
-        HOME: '/',
-        PROFILE: '/profile',
-        LOGIN: '/login',
-        CALENDAR: '/calendar'
-    }
-    isLoggedIn;
-    user;
-    doLogin;
-    //login;
-
-    constructor() {
-        extendObservable(this, {
-            isLoggedIn: computed(() => {
-                return !!SecurityStore.user
-            }),
-            user: computed(() => SecurityStore.user),
-            doLogin: false
-        });
-    }
-
-    onLogin = (credentials) => {
-        return SecurityStore.login(credentials);
-    }
+App.propTypes = {
+    stores: PropTypes.objectOf(PropTypes.shape({
+        security: PropTypes.instanceOf(SecurityStore)
+    }))
 }

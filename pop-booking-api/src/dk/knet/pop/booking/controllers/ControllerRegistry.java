@@ -8,68 +8,37 @@ import dk.knet.pop.booking.controllers.impl.*;
  */
 
 public class ControllerRegistry {
-    private static IAuthenticationController authenticationController;
-    private static BookableObjectController bookableObjectController;
-    private static BookingController bookingController;
-    private static ClosedPeriodController closedPeriodController;
-    private static KNetIntegrationController kNetIntegrationController;
-    private static PostItemController postItemController;
-    private static PropertyController propertyController;
-    private static UserController userController;
 
-    public static IAuthenticationController getAuthenticationController(){
-        if(authenticationController == null){
-            authenticationController = ConfigManager.DEBUG ? new AuthenticationControllerLocalhost() : new AuthenticationController();
-        }
-        return authenticationController;
+
+    public static IAuthenticationController getAuthenticationController() {
+        return ConfigManager.DEBUG ? new AuthenticationControllerLocalhost() : new AuthenticationController();
     }
 
-    public static BookableObjectController getBookableObjectController(){
-        if(bookableObjectController == null){
-            bookableObjectController = new BookableObjectController();
-        }
-        return bookableObjectController;
+    public static BookableObjectController getBookableObjectController() {
+        return new BookableObjectController();
     }
 
-    public static BookingController getBookingController(){
-        if(bookingController == null){
-            bookingController = new BookingController();
-        }
-        return bookingController;
+    public static BookingController getBookingController() {
+        return new BookingController();
     }
 
-    public static ClosedPeriodController getClosedPeriodController(){
-        if(closedPeriodController == null){
-            closedPeriodController= new ClosedPeriodController();
-        }
-        return closedPeriodController;
+    public static ClosedPeriodController getClosedPeriodController() {
+        return new ClosedPeriodController();
     }
 
-    public static KNetIntegrationController getkNetIntegrationController(){
-        if(kNetIntegrationController == null){
-            kNetIntegrationController = new KNetIntegrationController();
-        }
-        return kNetIntegrationController;
+    public static KNetIntegrationController getkNetIntegrationController() {
+        return new KNetIntegrationController();
     }
 
-    public static PostItemController getPostItemController(){
-        if(postItemController == null){
-            postItemController= new PostItemController();
-        }
-        return postItemController;
+    public static PostItemController getPostItemController() {
+        return new PostItemController();
     }
 
-    public static PropertyController getPropertyController(){
-        if(propertyController == null){
-            propertyController = new PropertyController();
-        }
-        return propertyController;
+    public static PropertyController getPropertyController() {
+        return new PropertyController();
     }
 
-    public static UserController getUserController(){
-        if(userController == null){
-            userController= new UserController();
-        }
-        return userController;
+    public static UserController getUserController() {
+        return new UserController();
     }
 }

@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 
 
@@ -36,8 +37,12 @@ import static dk.knet.pop.booking.configs.ErrorStrings.*;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class ProtectedService {
-	protected Logger logger = Logger.getLogger(this.getClass());
-	private static Long LOGIN_DURATION = 3600*1000L; //msec
+	/**
+	 * Determines how long the token is valid. in milliseconds
+	 * Note that if this number is too large - frontend might not be able to handle it.
+	 * JS setTimeout can only handle 32 bit integers and thus will execute immediately when value exceeds the limit.
+	 */
+	private static Long LOGIN_DURATION = 8*3600*1000L; //msec
 	private static Long REFRESH_TOKEN_DURATION = LOGIN_DURATION * 2;
 	
 	@Context

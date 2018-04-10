@@ -1,5 +1,5 @@
-import SecurityStore from "../controllers/SecurityStore";
-import LanguageStore, {D} from "../controllers/LanguageStore";
+import {context} from "../controllers/Context";
+import {D} from '../D';
 import {toast} from 'react-toastify';
 
 import superagentPromise from 'superagent-promise';
@@ -9,7 +9,7 @@ const superagent = superagentPromise(_superagent, global.Promise);
 const BASE_URL = process.env.REACT_APP_API_HOST;
 
 
-const token = req => SecurityStore.token && req.set('Authorization', `Bearer ${SecurityStore.token}`);
+const token = req => context.token && req.set('Authorization', `Bearer ${context.token}`);
 const getResponseBody = res => res.body;
 
 const handleErrors = err => {
@@ -17,20 +17,23 @@ const handleErrors = err => {
         toast.error(D("No internet connection"));
     }
     if (err && err.response && (err.response.status === 401 || err.response.status === 403)) {
-        SecurityStore.logout();
+        context.token = null;
     }
 
+    if(err && err.response && err.response.body){
+        toast.error(D(err.response.body.message));
+    }
     return err;
 }
 
 
-class RestClient {
+export class RestClient {
 
-    static getUrl(route) {
+    getUrl(route) {
         return `${BASE_URL}${route}`;
     }
 
-    static _fetch(agent) {
+    _fetch(agent) {
         return agent
             .use(token)
             .end(handleErrors)
@@ -38,20 +41,19 @@ class RestClient {
     }
 
     GET (route){
-        return RestClient._fetch(superagent.get(RestClient.getUrl(route)));
+        return this._fetch(superagent.get(this.getUrl(route)));
     }
 
     POST(route, body) {
-        return RestClient._fetch(superagent.post(RestClient.getUrl(route), body));
+        return this._fetch(superagent.post(this.getUrl(route), body));
     }
 
     PUT(route, body) {
-        return RestClient._fetch(superagent.put(RestClient.getUrl(route), body));
+        return this._fetch(superagent.put(this.getUrl(route), body));
     }
 
     DELETE(route) {
-        return RestClient._fetch(superagent.del(RestClient.getUrl(route)));
+        return this._fetch(superagent.del(this.getUrl(route)));
     }
 }
 
-export default new RestClient();

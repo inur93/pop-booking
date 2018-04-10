@@ -1,51 +1,89 @@
 //modules
 import React from 'react';
-
-//misc
-import Helper from '../../shared/HelperFunctions';
-
-//controllers
-import AdminController from '../../controllers/AdminPageController';
-import BookingController from '../../controllers/BookingController';
-
-//components
-import BookableItem from './EditBookableItem';
-import ClosedPeriod from './ClosedPeriod';
-import ClosedPeriodTable from './ClosedPeriodsTable';
-import BookableItemTable from './BookableItemTable';
+import {Badge, Col, Nav, NavItem, Row, Tab} from "react-bootstrap";
+import {D} from "../../D";
+import PropTypes from 'prop-types';
+import AdminUsers from "./AdminUsers";
+import {observer} from "mobx-react";
+import AdminUnits from "./AdminUnits";
+import {decorate} from "mobx";
+import AdminDictionary from "./AdminDictionary";
 
 
+class AdminPage extends React.Component {
 
-export default class AdminPage extends React.Component {
-  bookableItemsTableId = "bookable-items";
 
-  bookableItemTypes = [];
+    tabs = {
+        USERS: 'users',
+        UNITS: 'units',
+        DICTIONARY: 'dictionary'
+    };
 
-  constructor(props) {
-    super(props);
-    this.controller = this.props.controller;
-    this.bookableItemsTableId = "bookable-items";
-    this.state = {
+    constructor(props) {
+        super(props);
+    };
+
+
+    render() {
+        const {UNITS, USERS, DICTIONARY} = this.tabs;
+        const {stores} = this.props;
+        return (
+            <Tab.Container id="left-tabs-example" defaultActiveKey={this.tabs.USERS}>
+                <Row className="clearfix">
+                    <Col sm={3} md={2}>
+                        <Nav bsStyle="pills" stacked>
+                            <NavItem eventKey={USERS}>{D('Users')}          <Badge pullRight>{stores.user.total}</Badge></NavItem>
+                            <NavItem eventKey={UNITS}>{D('Units')}          <Badge pullRight>{stores.bookableItem.total}</Badge></NavItem>
+                            <NavItem eventKey={DICTIONARY}>{D('Dictionary')} <Badge pullRight>{stores.language.total}</Badge></NavItem>
+                        </Nav>
+                    </Col>
+                    <Col sm={9} md={10}>
+                        <Tab.Content animation>
+                            <Tab.Pane eventKey={USERS}>
+                                <AdminUsers store={stores.user}/>
+                            </Tab.Pane>
+                            <Tab.Pane eventKey={UNITS}>
+                                <AdminUnits store={stores.bookableItem}/>
+                            </Tab.Pane>
+                            <Tab.Pane eventKey={DICTIONARY}>
+                                <AdminDictionary store={stores.language}/>
+                            </Tab.Pane>
+                        </Tab.Content>
+                    </Col>
+                </Row>
+            </Tab.Container>
+        );
+        /* return (
+             <Tab.Container id="left-tabs-example" defaultActiveKey={USERS}>
+                 <Row className="clearfix">
+                     <Col sm={3} md={2}>
+                         <Nav bsStyle="pills" stacked>
+                             <NavItem eventKey={USERS}>{D('Users')} <Badge pullRight>{stores.user.total}</Badge></NavItem>
+                             <NavItem eventKey={UNITS}>{D('Units')} <Badge pullRight>{stores.bookableItem.total}</Badge></NavItem>
+                         </Nav>
+                     </Col>
+                     <Col sm={9} md={10}>
+                         <Tab.Content animation>
+                             <Tab.Pane eventKey={USERS}>
+                                 <AdminUsers store={stores.user}/>
+                             </Tab.Pane>
+                             <Tab.Pane eventKey={UNITS}>
+                                 <AdminUnits store={stores.bookableItem}/>
+                             </Tab.Pane>
+                         </Tab.Content>
+                     </Col>
+                 </Row>
+             </Tab.Container>
+         );*/
     }
-  };
+}
 
+export default observer(AdminPage);
 
+decorate(AdminPage, {})
 
-
-
-
-
-
-  render() {
-    return (
-      <div>
-
-        <div>
-          <BookableItemTable id="edit-bookable-items" title="Bookable items" createLabel="create bookable item"/>
-          <ClosedPeriodTable id="edit-closed-periods" title="Closed periods" createLabel="create closed period"/>
-        </div>
-
-      </div>
-    );
-  }
+AdminPage.propTypes = {
+    stores: PropTypes.object,
+    tab: PropTypes.string,
+    history: PropTypes.object
 }

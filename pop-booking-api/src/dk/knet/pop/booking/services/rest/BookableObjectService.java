@@ -21,47 +21,48 @@ import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_BOOKABLE_OBJECT_INV
 @Consumes(MediaType.APPLICATION_JSON)
 public class BookableObjectService extends ProtectedService {
 
-	private BookableObjectController controller = ControllerRegistry.getBookableObjectController();
-	@GET
-	public List<BookableItem> getBookableObjects(@QueryParam("type") String type){
-		BookableObjectDAO dao = new BookableObjectDAO();
-		if(type != null){
-			return controller.getBookableObjectsByType(BookingType.valueOf(type));
-		}else{
-			return dao.getBookableObjects();
-		}
-	}
-	
-	@POST
-	public BookableItem createBookableItem(BookableItem item) throws BasicException{
-		this.checkTokenAndRole(Role.ADMIN);
-		return controller.createBookableItem(item);
-	}
-	
-	@GET
-	@Path("/types")
-	public BookingType[] getBookableItemTypes(){
-		return BookingType.values();
-	}
-	
-	@PUT
-	@Path("/{id}")
-	public BookableItem updateBookableItem(@PathParam("id") String id, BookableItem item) throws BasicException{
-		return controller.updateBookableItem(item);
-	}
-	
-	@DELETE
-	@Path("/{id}")
-	public void deleteBookableItem(@PathParam("id") String id) throws BasicException{
-		try{
-			long idLong = Long.parseLong(id);
-			controller.deleteBookableItem(idLong);
-		}catch(NumberFormatException e){
-			throw new InvalidArgsException(ERROR_BOOKABLE_OBJECT_INVALID_ID);
-		}
-	}
+    private BookableObjectController controller = ControllerRegistry.getBookableObjectController();
 
-	
-	
-	
+    @GET
+    public List<BookableItem> getBookableObjects(@QueryParam("type") String type) {
+        BookableObjectDAO dao = new BookableObjectDAO();
+        if (type != null) {
+            return controller.getBookableObjectsByType(BookingType.valueOf(type));
+        } else {
+            return controller.getAllBookableItems();
+        }
+    }
+
+    @POST
+    public BookableItem createBookableItem(BookableItem item) throws BasicException {
+        this.checkTokenAndRole(Role.ADMIN);
+        return controller.createBookableItem(item);
+    }
+
+    @GET
+    @Path("/types")
+    public BookingType[] getBookableItemTypes() {
+        return BookingType.values();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public BookableItem updateBookableItem(@PathParam("id") String id, BookableItem item) throws BasicException {
+        checkTokenAndRole(Role.ADMIN);
+        return controller.updateBookableItem(item);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public void deleteBookableItem(@PathParam("id") String id) throws BasicException {
+        checkTokenAndRole(Role.ADMIN);
+        try {
+            long idLong = Long.parseLong(id);
+            controller.deleteBookableItem(idLong);
+        } catch (NumberFormatException e) {
+            throw new InvalidArgsException(ERROR_BOOKABLE_OBJECT_INVALID_ID);
+        }
+    }
+
+
 }

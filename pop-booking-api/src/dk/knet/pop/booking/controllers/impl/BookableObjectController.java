@@ -14,10 +14,10 @@ public class BookableObjectController {
 	BookableObjectDAO dao = new BookableObjectDAO();
 
 	public BookableItem createBookableItem(BookableItem item) throws BasicException{
-		if(item.getBookingType() != null &&
+		if(/*item.getBookingType() != null && //this is currently not used - but could be reintroduced*/
 				item.getColor() != null &&
 				item.getName() != null){
-			return dao.createBookableObject(item);
+			return dao.create(item);
 
 		}else{
 			throw new BadRequestException(ERROR_BOOKABLE_ITEM_INVALID);
@@ -25,7 +25,7 @@ public class BookableObjectController {
 	}
 
 	public BookableItem updateBookableItem(BookableItem item) {
-		return dao.updateBookableItem(item);
+		return dao.createOrUpdate(item);
 	}
 
 	public List<BookableItem> getBookableObjectsByType(BookingType type){
@@ -33,10 +33,10 @@ public class BookableObjectController {
 	}
 
 	public List<BookableItem> getAllBookableItems(){
-		return dao.getBookableObjects();
+		return dao.getAll();
 	}
 
 	public void deleteBookableItem(long id){
-		dao.deleteBookableItem(id);
+		dao.deleteById(id);
 	}
 }

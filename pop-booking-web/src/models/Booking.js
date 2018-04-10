@@ -1,6 +1,6 @@
-import {computed, extendObservable, transaction} from 'mobx';
-import moment from 'moment';
+import {computed, decorate, transaction} from 'mobx';
 import SecurityStore from "../controllers/SecurityStore";
+import {D} from "../D";
 
 export default class Booking {
 
@@ -8,29 +8,34 @@ export default class Booking {
 
     id;
 
-    start;
-    end;
-    title;
-    selectable;
     dateFrom;
     dateTo;
     booker;
     color;
+    bookableItem;
+
     constructor(json, store) {
         this.store = store;
-        //this.start = new Date(json.dateFrom);
-        //this.end = new Date(json.dateTo);
-        //this.title = json.bookableItem.name;
         Object.assign(this, json);
-        extendObservable(this, {
-            title: json.bookableItem.name + ": " + json.booker.name + " " + (json.booker.roomNo || ""),
-            color: json.bookableItem.color,
-            selectable: SecurityStore.user && SecurityStore.user.id === this.booker.id,
-            start: computed(() => new Date(this.dateFrom)),
-            end: computed(() => new Date(this.dateTo))
-        });
+        this.color = json.bookableItem.color;
+
     }
 
+    get title(){
+        return D(this.bookableItem.name) + ": " + (this.booker.roomNo || this.booker.name || this.booker.username);
+    }
+
+    get selectable(){
+        return SecurityStore.user && SecurityStore.user.id === this.booker.id
+    }
+
+    get start(){
+        return new Date(this.dateFrom);
+    }
+
+    get end(){
+        return new Date(this.dateTo);
+    }
 
     updateFromJson = (json) => {
         transaction(() => {
@@ -55,3 +60,10 @@ export default class Booking {
     }
 
 }
+
+decorate(Booking, {
+    title: computed,
+    selectable: computed,
+    start: computed,
+    end: computed
+})

@@ -8,14 +8,14 @@ import javax.persistence.Query;
 import dk.knet.pop.booking.models.BookableItem;
 import dk.knet.pop.booking.models.Booking;
 import dk.knet.pop.booking.models.BookingType;
-import dk.knet.pop.booking.models.BookingUser;
 
-public class BookingDAO extends BasicDAO {
+public class BookingDAO extends BasicDAO<Booking> {
 
+    public BookingDAO(){
+        super(Booking.class);
+    }
     @SuppressWarnings("unchecked")
     public List<Booking> getBookings(Date from, Date to, BookingType type) {
-        start();
-
         String queryStr = "SELECT B "
                 + "FROM Booking B JOIN B.bookableItem BI "
                 + "WHERE ("
@@ -31,13 +31,10 @@ public class BookingDAO extends BasicDAO {
 
         ////System.out.println("query: " + query.toString());
         List<Booking> bookings = query.getResultList();
-        end();
         return bookings;
     }
 
     public List<Booking> getExistingBookings(Date from, Date to, BookableItem item) {
-        start();
-
         String queryStr = "SELECT B "
                 + "FROM Booking B JOIN B.bookableItem BI "
                 + "WHERE ("
@@ -52,7 +49,7 @@ public class BookingDAO extends BasicDAO {
 
         ////System.out.println("query: " + query.toString());
         List<Booking> bookings = query.getResultList();
-        end();
+        s.flush();
         return bookings;
     }
 
@@ -67,42 +64,11 @@ public class BookingDAO extends BasicDAO {
         } else {
             hql = "SELECT B FROM Booking B JOIN B.booker U WHERE U.id=:booker AND B.dateFrom>:date";
         }
-        start();
         Query query = s.createQuery(hql);
 
         query.setParameter("booker", userId);
         if (from != null) query.setParameter("date", from);
-
-        List<Booking> results = query.getResultList();
-        end();
-        return results;
+        s.flush();
+        return (List<Booking>) query.getResultList();
     }
-
-    public Booking createBooking(Booking booking) {
-        start();
-        Booking created = simpleSaveNew(booking);
-        end();
-        return created;
-    }
-
-    public Booking getBookingById(long id) {
-        start();
-        Booking booking = this.simpleGet(Booking.class, id);
-        end();
-        return booking;
-    }
-
-    public void deleteBooking(Booking booking) {
-        start();
-        this.simpleDelete(booking);
-        end();
-    }
-
-    public Booking updateBooking(Booking booking) {
-        start();
-        Booking updated = this.simpleSave(booking);
-        end();
-        return updated;
-    }
-
 }

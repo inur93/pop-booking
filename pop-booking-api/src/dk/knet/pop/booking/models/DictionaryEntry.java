@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created: 21-03-2018
@@ -11,7 +12,9 @@ import java.io.Serializable;
  */
 
 @NoArgsConstructor
+@Data
 @Getter
+@Setter
 @Entity
 @Table(name = "dictionary_entry", uniqueConstraints = {@UniqueConstraint(columnNames = {"entry_language", "entry_key"})})
 public class DictionaryEntry implements Serializable {
@@ -25,5 +28,8 @@ public class DictionaryEntry implements Serializable {
     @Column(name = "entry_key")
     private String key;
     private String value;
+
+    private Date created;
+    private Date updated;
 
 }

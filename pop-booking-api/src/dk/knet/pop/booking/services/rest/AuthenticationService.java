@@ -10,13 +10,10 @@ import javax.ws.rs.core.Response;
 
 import dk.knet.pop.booking.controllers.ControllerRegistry;
 import dk.knet.pop.booking.controllers.IAuthenticationController;
-import dk.knet.pop.booking.controllers.impl.AuthenticationController;
-import dk.knet.pop.booking.controllers.impl.AuthenticationControllerLocalhost;
-import dk.knet.pop.booking.controllers.impl.ConfigManager;
 import dk.knet.pop.booking.exceptions.AuthorizationException;
 import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.models.BookingUser;
-import dk.knet.pop.booking.models.LoginUserViewModel;
+import dk.knet.pop.booking.viewmodels.LoginUserViewModel;
 
 import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_LOGIN_FAILED;
 

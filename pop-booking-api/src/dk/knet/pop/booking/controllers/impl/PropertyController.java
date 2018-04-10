@@ -7,12 +7,12 @@ import dk.knet.pop.booking.models.Property;
 
 
 public class PropertyController {
-	
+
 	private PropertyDAO dao = new PropertyDAO();
-	
-	public Property getProperty(String id){
-		return dao.getPropertyById(id);
+
+	public Property getProperty(Long id){
+		return dao.getById(id);
 	}
-	
+
 
 }

@@ -5,18 +5,22 @@ import java.util.Date;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
+import dk.knet.pop.booking.models.Booking;
 import org.apache.log4j.Logger;
 
 import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.exceptions.InvalidArgsException;
 import dk.knet.pop.booking.models.BookingUser;
 
-public class UserDAO extends BasicDAO{
+public class UserDAO extends BasicDAO<BookingUser> {
 
 	private Logger log = Logger.getLogger(getClass());
 
+	public UserDAO() {
+		super(BookingUser.class);
+	}
+
 	public BookingUser getUserByName(String username) {
-		start();
 		BookingUser user = null;
 		try{
 			user = (BookingUser) s.createQuery("FROM BookingUser u WHERE u.username = '" + username.toLowerCase() + "'").getSingleResult();
@@ -27,30 +31,7 @@ public class UserDAO extends BasicDAO{
 		}catch(NullPointerException npe){
 			log.warn("username was not defined", npe);
 		}
-		end();
+		s.flush();
 		return user;
 	}
-	
-	public BookingUser createUser(BookingUser user) throws BasicException{
-		if(user == null) return user;
-		if(user.getUsername() == null || user.getPassword() == null) throw new InvalidArgsException("Username and password can't be null");
-		
-//		String saltedHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
-//		user.setTokenHash(saltedHash);
-		start();
-		BookingUser u = simpleSaveNew(user);
-		end();
-		return u;
-	}
-	
-	public BookingUser updateUser(BookingUser user) throws BasicException{
-		if(user == null) return null;
-		if(user.getUsername() == null || user.getPassword() == null) throw new InvalidArgsException("Username and password can't be null");
-		start();
-		user.setLastUpdated(new Date());
-		BookingUser u = simpleUpdate(user);
-		end();
-		return u;
-	}
-	
 }

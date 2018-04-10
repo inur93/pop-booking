@@ -1,28 +1,23 @@
-import RestClient from '../shared/RestClient';
-import MessageController from './MessageController';
 import PostItem from "../models/PostItem";
-import {extendObservable} from 'mobx';
+import {decorate, observable, action} from 'mobx';
+import {toast} from 'react-toastify';
 
-export default class PostsController {
+export default class PostsStore {
 
+    client;
     page = 0;
     number = 5;
     step = 1;
 
     path = '/v1/posts';
 
-    posts;
-    isLoading;
-    error;
+    posts = observable.array([]);
+    isLoading = false;
+    error = false;
 
 
-    constructor() {
-        extendObservable(this, {
-            posts: [],
-            isLoading: true,
-            error: false
-        });
-
+    constructor(client) {
+        this.client = client;
         this.getPosts();
     }
 
@@ -37,7 +32,7 @@ export default class PostsController {
 
     queryPosts = (page, number) => {
         this.error = false;
-        return RestClient.GET(this.path + '?page=' + page + '&number=' + number)
+        return this.client.GET(this.path + '?page=' + page + '&number=' + number)
             .then(posts => {
                 this.isLoading = false;
                 if (posts) {
@@ -50,27 +45,38 @@ export default class PostsController {
     }
 
     create = (content) => {
-        return RestClient.POST(this.path, {
+        return this.client.POST(this.path, {
             content: content,
             created: new Date()
-        }).then(created => {
-            this.posts.push(new PostItem(created, this));
+        }).then((created) => {
+            this.pushPost(created);
         }).catch(err => {
-            MessageController.addDangerMessage(err.message);
+            toast.err(err.message);
             throw err;
         });
+    };
+
+    pushPost = (post) => {
+        this.posts.push(new PostItem(post, this));
     }
 
     remove = (item) => {
         if (item) {
-            return RestClient.DELETE(this.path + "/" + item.id)
-                .then(res => {
+            return this.client.DELETE(this.path + "/" + item.id)
+                .then(action(() => {
                     this.posts = this.posts.filter(p => p.id !== item.id);
-                })
-                .catch(err => {
+                })).catch(err => {
                     //TODO
                 });
         }
     }
 
+
 }
+
+decorate(PostsStore, {
+    posts: observable,
+    isLoading: observable,
+    error: observable,
+    pushPost: action
+})

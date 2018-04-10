@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import Recaptcha from 'react-recaptcha';
 import {Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import PropTypes from 'prop-types';
-import {extendObservable} from 'mobx';
+import {decorate, observable} from 'mobx';
 import {observer} from "mobx-react";
-import LanguageStore, {D} from "../../controllers/LanguageStore";
+import {D} from '../../D';
 import {toast} from 'react-toastify';
 
 class Login extends Component {
@@ -12,20 +12,11 @@ class Login extends Component {
 
     ref = undefined;
 
-    username;
-    password;
+    username = "";
+    password = "";
     captchaToken;
 
-    isLoading;
-
-    constructor() {
-        super();
-        extendObservable(this, {
-            username: "",
-            password: "",
-            isLoading: false
-        })
-    }
+    isLoading = false;
 
     reset = () => {
         this.ref.reset();
@@ -42,7 +33,6 @@ class Login extends Component {
             this.props.onExit();
         }).catch((reason) => {
             this.isLoading = false;
-            toast.warn(reason.message);
         });
     }
 
@@ -99,4 +89,10 @@ export default observer(Login);
 Login.propTypes = {
     onExit: PropTypes.func,
     onLogin: PropTypes.func.isRequired
-}
+};
+
+decorate(Login, {
+    username: observable,
+    password: observable,
+    isLoading: observable
+})

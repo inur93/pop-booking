@@ -11,7 +11,7 @@ public class BasicException extends Exception implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected Status code;
+	public Status code;
 	public BasicException(Status code, String message) {
 		super(message);
 		this.code = code;

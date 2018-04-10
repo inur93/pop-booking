@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
-import {extendObservable} from 'mobx';
+import {decorate, observable} from 'mobx';
 import Booking from "../../models/Booking";
 import {Button, Col, ControlLabel, FormGroup, FormControl, Modal, Row, Form, Grid} from "react-bootstrap";
 import Calendar from "react-calendar";
 import TimePicker from 'react-bootstrap-time-picker';
-import StoreRegistry from "../../controllers/StoreRegistry";
-import LanguageStore, {D} from "../../controllers/LanguageStore";
+import {D} from '../../D';
 import {toast} from 'react-toastify';
+import BookingStore from "../../controllers/BookingStore";
 
 class EditBooking extends Component {
 
@@ -19,21 +19,17 @@ class EditBooking extends Component {
 
     step = 30;
 
-    isLoading;
+    isLoading = false;
 
     constructor(props) {
         super(props);
-        let df = props.booking.start;
-        let dt = props.booking.end;
-        let ft = df.getHours() * 60 * 60 + (df.getMinutes() - df.getMinutes() % this.step) * 60;
-        let tt = dt.getHours() * 60 * 60 + (dt.getMinutes() - dt.getMinutes() % this.step) * 60;
-        extendObservable(this, {
-            fromDate: df,
-            fromTime: ft,
-            toDate: dt,
-            toTime: tt,
-            isLoading: false
-        });
+        this.fromDate = props.booking.start;
+        this.toDate = props.booking.end;
+        let fromDate = this.fromDate;
+        let toDate = this.toDate;
+        this.fromTime = fromDate.getHours() * 60 * 60 + (fromDate.getMinutes() - fromDate.getMinutes() % this.step) * 60;
+        this.toTime = toDate.getHours() * 60 * 60 + (toDate.getMinutes() - toDate.getMinutes() % this.step) * 60;
+
     }
 
     updateBooking = () => {
@@ -45,13 +41,13 @@ class EditBooking extends Component {
         let {booking} = this.props;
         booking.dateFrom = from;
         booking.dateTo = to;
-        StoreRegistry.getBookingStore().updateBooking(booking)
-            .then(res => {
+        this.props.store.updateBooking(booking)
+            .then(() => {
                 this.props.onExit();
+                toast.success(D('Booking has been updated'));
                 this.isLoading = false;
-            }).catch(reason => {
+            }).catch(() => {
             this.isLoading = false;
-            toast.error(reason.message);
         })
     }
 
@@ -60,10 +56,10 @@ class EditBooking extends Component {
         this.props.booking.delete()
             .then(() => {
                 this.isLoading = false;
+                toast.success(D('The booking has been deleted'));
                 this.props.onExit();
-            }).catch(reason => {
+            }).catch(() => {
             this.isLoading = false;
-            toast.error(reason.message);
         })
     }
 
@@ -118,7 +114,7 @@ class EditBooking extends Component {
                                 <FormGroup>
                                     <ControlLabel>{D('From')}</ControlLabel>
                                     <div className="calendar-picker-container">
-                                        <Calendar id="edit-from-date-picker" value={fromDate}
+                                        <Calendar id="edit-from-date-picker" locale={this.props.locale} value={fromDate}
                                                   onChange={this.fromDateChanged}/>
                                     </div>
                                     <TimePicker format={24} start="10:00" end="21:00" step={this.step} value={fromTime}
@@ -129,7 +125,7 @@ class EditBooking extends Component {
                                 <FormGroup>
                                     <ControlLabel>{D('To')}</ControlLabel>
                                     <div className="calendar-picker-container">
-                                        <Calendar id="edit-to-date-picker" value={toDate}
+                                        <Calendar id="edit-to-date-picker" locale={this.props.locale} value={toDate}
                                                   onChange={this.toDateChanged}/>
                                     </div>
                                     <TimePicker format={24} start="10:00" end="21:00" step={this.step} value={toTime}
@@ -155,7 +151,19 @@ export default observer(EditBooking)
 
 EditBooking.propTypes = {
     onExit: PropTypes.func.isRequired,
-    booking: PropTypes.instanceOf(Booking)
+    booking: PropTypes.instanceOf(Booking),
+    store: PropTypes.instanceOf(BookingStore),
+    locale: PropTypes.string
 }
 
-EditBooking.defaultProps = {}
+EditBooking.defaultProps = {
+    locale: 'en'
+}
+
+decorate(EditBooking, {
+    fromDate: observable,
+    fromTime: observable,
+    toDate: observable,
+    toTime: observable,
+    isLoading: observable
+})

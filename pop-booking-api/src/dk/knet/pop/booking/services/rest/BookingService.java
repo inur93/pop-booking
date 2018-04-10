@@ -88,54 +88,5 @@ public class BookingService extends ProtectedService {
 			throw new BadRequestException(ERROR_USER_INVALID);
 		}
 	}
-	
-//	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-//	@POST @Path("/{bookingid}/saveimage/{name}")
-//	public void saveImage(byte[] fileBytes, @QueryParam("bookingid") long bookingId, @QueryParam("name") String name){
-//		//System.out.println(name);
-//	}
-	
-//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-////	@Consumes(MediaType.MULTIPART_FORM_DATA)//MediaType.APPLICATION_FORM_URLENCODED) //MULTIPART_FORM_DATA,APPLICATION_OCTET_STREAM
-//	@POST @Path("/{bookingid}/saveimage/{name}")
-//	public Response saveImagePut(
-//			@FormDataParam("file") InputStream uploadedInputStream,
-//            @FormDataParam("file") FormDataContentDisposition fileDetails,
-////			String file,
-//			//String formData,
-////			@FormDataParam("uploadFile") InputStream fileInputStream,
-////            @FormDataParam("uploadFile") FormDataContentDisposition fileFormDataContentDisposition, 
-//			@PathParam("bookingid") long bookingId, 
-//			@PathParam("name") String name){
-//		//System.out.println(name);
-//		return Response.ok("success").build();
-//		
-//		try {
-			
-			//BufferedImage img = ImageIO.read(stream);
-            // stream.
-//			new File("images").mkdir();
-//			name = !name.contains(".") ? name + ".jpg" : name;
-//			FileOutputStream fos = new FileOutputStream("images/" + name);
-//			ImageIO.write(img, ".jpeg", fos);
-			//fos.write(image.getBytes());
-//			fos.close();
-//			stream.close();
-//		} catch (IOException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 
-
-	protected Date parseDate(String date) {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			return df.parse(date);
-		} catch (ParseException e) {
-			//System.err.println("failed parsing date string: " + date);
-			e.printStackTrace();
-		}
-		return null;
-	}
 }

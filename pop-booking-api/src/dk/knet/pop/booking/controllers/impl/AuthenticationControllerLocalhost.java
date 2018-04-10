@@ -1,10 +1,9 @@
 package dk.knet.pop.booking.controllers.impl;
 
-import dk.knet.pop.booking.controllers.IAuthenticationController;
 import dk.knet.pop.booking.database.UserDAO;
 import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.models.BookingUser;
-import dk.knet.pop.booking.models.LoginUserViewModel;
+import dk.knet.pop.booking.viewmodels.LoginUserViewModel;
 import dk.knet.pop.booking.security.JWTHandler;
 
 import javax.ws.rs.client.Client;
@@ -12,7 +11,6 @@ import javax.ws.rs.core.Response;
 
 import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_ACCOUNT_DEACTIVATED;
 import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_INVALID_CREDENTIALS;
-import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_SERVER_UNKNOWN;
 
 /**
  * Created: 17-02-2018

@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.knet.pop.booking.models.BookingUser;
+import lombok.extern.slf4j.Slf4j;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
@@ -14,6 +15,7 @@ import dk.knet.pop.booking.models.knet.KnetUser;
 import dk.knet.pop.booking.models.knet.KnetUsers;
 import dk.knet.pop.booking.models.knet.KnetVlan;
 
+@Slf4j
 public class KNetIntegrationController {
 
 	private final String targetUrl = ConfigManager.K_NET_API_URL;// "https://k-net.dk/api/v2/network/";
@@ -34,6 +36,7 @@ public class KNetIntegrationController {
 
 			return users.getResults().get(0);
 		}
+		log.warn("user not found in knet: " + username);
 		////System.err.println("No user found for username:" + username);
 		return null;
 	}
@@ -84,12 +87,6 @@ public class KNetIntegrationController {
 			this.key = key;
 			this.value = value;
 		}
-	}
-
-	public static void main(String[] args) {
-		KnetUser  user = new KNetIntegrationController().getUserByUsername("revurin");
-
-		System.out.println("user: " + user.getName());
 	}
 }
 

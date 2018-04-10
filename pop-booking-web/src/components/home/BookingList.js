@@ -3,7 +3,7 @@ import Helper from '../../shared/HelperFunctions';
 import {observer} from "mobx-react";
 import PropTypes from 'prop-types';
 import Booking from "../../models/Booking";
-import LanguageStore, {D} from "../../controllers/LanguageStore";
+import {D} from '../../D';
 
 
 class BookingList extends React.Component {

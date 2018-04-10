@@ -1,5 +1,5 @@
 import React from 'react';
-import 'jquery';
+
 import { ChromePicker } from 'react-color';
 
 //misc

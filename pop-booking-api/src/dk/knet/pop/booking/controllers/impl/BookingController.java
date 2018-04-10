@@ -15,9 +15,11 @@ import dk.knet.pop.booking.models.Booking;
 import dk.knet.pop.booking.models.BookingType;
 import dk.knet.pop.booking.models.BookingUser;
 import dk.knet.pop.booking.models.ClosedPeriod;
+import lombok.extern.slf4j.Slf4j;
 
 import static dk.knet.pop.booking.configs.ErrorStrings.*;
 
+@Slf4j
 public class BookingController {
 
 	private BookingDAO dao = new BookingDAO();
@@ -25,7 +27,7 @@ public class BookingController {
 
 	public Booking createBooking(Booking booking) throws DoubleBookingException, InvalidBookingArgsException{
 		if(isBookingValid(booking)){
-			return dao.createBooking(booking);
+			return dao.create(booking);
 		}
 		return null;
 	}
@@ -46,19 +48,32 @@ public class BookingController {
 
 
 	public void deleteBooking(long bookingId, BookingUser user) throws BasicException{
-		Booking booking = dao.getBookingById(bookingId);
-		if(booking.getBooker().getId().equals(user.getId())){
-			dao.deleteBooking(booking);
-		}else{
-			throw new AuthorizationException(Status.UNAUTHORIZED, ERROR_AUTHENTICATION_PERMISSION_DENIED);
+		Booking booking = dao.getById(bookingId);
+		boolean authException = false;
+		try {
+			if (isBookingValid(booking)){
+				if(booking.getBooker().getId().equals(user.getId())){
+					dao.delete(booking);
+					return;
+				}else{
+					authException = true;
+				}
+			}
+		}catch (BasicException exception){
+			log.warn("tried to delete invalid booking: " + (booking == null ? "null": booking.toString()));
+		}
+		if(authException){
+			throw new AuthorizationException(Status.UNAUTHORIZED, "You are not allowed to delete this booking");
+		}else {
+			throw new BasicException(Status.BAD_REQUEST, "The booking can no longer be deleted");
 		}
 	}
 
 	public Booking updateBooking(Booking booking, BookingUser user) throws BasicException{
-		Booking existing = dao.getBookingById(booking.getId());
+		Booking existing = dao.getById(booking.getId());
 		if(existing.getBooker().getId().equals(user.getId())){
 			if(isBookingValid(booking)){
-				return dao.updateBooking(booking);
+				return dao.createOrUpdate(booking);
 			}
 		}else{
 			throw new AuthorizationException(Status.UNAUTHORIZED, ERROR_AUTHENTICATION_PERMISSION_DENIED);
@@ -72,6 +87,12 @@ public class BookingController {
 		if(booking.getDateTo() == null) throw new InvalidBookingArgsException(ERROR_BOOKING_INVALID);
 		int diff = booking.getDateTo().compareTo(booking.getDateFrom()); //diff between from and to
 		int diffNow = new Date().compareTo(booking.getDateFrom()); //diff between from and now
+
+		long bookingDuration = booking.getDateTo().getTime() - booking.getDateFrom().getTime();
+		long bookingDurationHours = bookingDuration/1000/60/60;
+
+		if(booking.getBookableItem() == null) throw new InvalidBookingArgsException("Bookable item is invalid");
+		if(booking.getBookableItem().getMaxBookableHours() < bookingDurationHours) throw new InvalidBookingArgsException("This unit can not be booked for this long");
 
 		//check if booking is made in past time
 		if(diffNow > 0){

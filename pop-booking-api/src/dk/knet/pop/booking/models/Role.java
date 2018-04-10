@@ -31,13 +31,5 @@ public enum Role {
 	public String getTitle(){
 		return title;
 	}
-	
-	public static Role valueOfTitle(String title){
-		for(Role b : Role.values()){
-			if(b.getTitle().equals(title)){
-				return b;
-			}
-		}
-		throw new IllegalArgumentException("No enum value found for: " + title);
-	}
+
 }

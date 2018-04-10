@@ -1,5 +1,5 @@
-import SecurityStore from "../controllers/SecurityStore";
-import {computed, extendObservable} from 'mobx';
+import {computed, decorate, observable} from 'mobx';
+import {stores} from "../controllers/Context";
 
 export default class PostItem {
 
@@ -10,19 +10,14 @@ export default class PostItem {
     created;
     content;
 
-    isRemovable;
-
     constructor(json, store) {
         this.store = store;
         Object.assign(this, json);
-        extendObservable(this, {
-            isRemovable: computed(this.resolveIsRemovable)
-        })
     }
 
-    resolveIsRemovable = () => {
-        const {user} = SecurityStore;
-        if(user && user.id === this.createdBy.id) return true;
+    get isRemovable() {
+        const {user} = stores.security;
+        if (user && user.id === this.createdBy.id) return true;
         return false;
     }
 
@@ -31,3 +26,8 @@ export default class PostItem {
     }
 
 }
+
+
+decorate(PostItem, {
+    isRemovable: computed
+})

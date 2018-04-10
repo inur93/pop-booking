@@ -24,7 +24,10 @@ public class ClosedPeriodController {
 		period.setLastUpdated(created);
 		period.setCreatedBy(user);
 		period.setLastUpdatedBy(user);
-		return dao.create(period);
+		if(isPeriodValid(period)) {
+			return dao.create(period);
+		}
+		return null;
 	}
 	
 	public ClosedPeriod update(ClosedPeriod period, BookingUser user) throws BasicException{
@@ -37,7 +40,7 @@ public class ClosedPeriodController {
 		period.setCreated(current.getCreated());
 		period.setCreatedBy(current.getCreatedBy());
 		
-		return dao.update(period);
+		return dao.createOrUpdate(period);
 	}
 	
 	public void delete(Long id, BookingUser user) throws BasicException{
@@ -51,5 +54,24 @@ public class ClosedPeriodController {
 	
 	public List<ClosedPeriod> getByType(BookingType type, Date from, Date to) {
 		return dao.getByType(type, from, to);
+	}
+
+
+	private boolean isPeriodValid(ClosedPeriod period) throws BasicException{
+		boolean itemsEmpty = period.getApplyToItems() == null && period.getApplyToItems().isEmpty();
+		boolean typesEmpty = period.getApplyToTypes() == null && period.getApplyToTypes().isEmpty();
+		if(itemsEmpty && typesEmpty){
+			throw new InvalidArgsException("An item or item must be selected for the closed period.");
+		}
+
+		if(period.getStart() == null){
+			throw new InvalidArgsException("A start date was not defined for the closed period");
+		}
+
+		if(period.getEnd() == null){
+			throw new InvalidArgsException("An end date was not defined for the closed period");
+		}
+
+		return true;
 	}
 }

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
 import LanguageStore from "../controllers/LanguageStore";
+import {D} from "../D";
 
 class Spinner extends Component {
 
@@ -16,11 +17,10 @@ class Spinner extends Component {
 
     render() {
         const {show, error, retryFunc} = this.props;
-        const {SPINNER_LOADING, SPINNER_ERROR, SPINNER_RETRY} = LanguageStore;
         return (
             <div>
                 { show ?
-                    error ? <p>{SPINNER_ERROR}{retryFunc && <a href="#" onClick={this.retry}>{SPINNER_RETRY}</a>} </p> : <p>{SPINNER_LOADING}</p>
+                    error ? <p>{D('Content could not be loaded.')}{retryFunc && <a href="#" onClick={this.retry}>{D('Retry')}</a>} </p> : <p>{D('Loading...')}</p>
                     : <div/>
                 }
             </div>

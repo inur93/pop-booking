@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<!--suppress ALL -->
 <hibernate-configuration>
 	<session-factory>
 
@@ -11,8 +12,9 @@
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
 
+
 		<!-- Outputs the SQL queries, should be disabled in production -->
-		<property name="hibernate.show_sql">${hibernate.show_sql}</property>
+		<property name="hibernate.show_sql">${hibernate.show.sql}</property>
 
 		<!-- Statistics to analyze performance, turn off in production -->
 		<property name="hibernate.generate_statistics">false</property>
@@ -21,8 +23,7 @@
 
 		<!-- <property name="hibernate.current_session_context_class">thread</property> 
 			<property name="connection.pool_size">1</property> -->
-
-		<property name="hibernate.current_session_context_class">${hibernate.current_session_context_class}</property>
+		<property name="hibernate.current_session_context_class">${hibernate.current.session.context.class}</property>
 
 		<property name="hibernate.c3p0.min_size">5</property>
 		<property name="hibernate.c3p0.max_size">20</property>
@@ -33,12 +34,13 @@
 		<!-- Auto create empty schema on every application start, DISABLE in production -->
 		<!-- READ https://docs.jboss.org/hibernate/orm/5.0/manual/en-US/html/ch03.html 
 			for values -->
-		<property name="hibernate.hbm2ddl.auto">create-drop</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 
-		<!-- Just update schema with changes on application start, DISABLE in production -->
-		<!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
+		<!-- Just createOrUpdate schema with changes on application start, DISABLE in production -->
+		<!-- <property name="hibernate.hbm2ddl.auto">createOrUpdate</property> -->
 
 		<!-- Persistent classes -->
+		<mapping class="dk.knet.pop.booking.models.Language"/>
 		<mapping class="dk.knet.pop.booking.models.DictionaryEntry" />
 		<mapping class="dk.knet.pop.booking.models.BookableItem" />
 		<mapping class="dk.knet.pop.booking.models.Booking" />

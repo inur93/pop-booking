@@ -33,7 +33,6 @@ public class PostItemService extends ProtectedService{
 	public List<PostItem> getPosts(
 			@DefaultValue(value="0") @QueryParam("page") int page, 
 			@DefaultValue(value="5") @QueryParam("number") int number){
-		log.error("test logging");
 		return controller.getPosts(page, number);
 	}
 	

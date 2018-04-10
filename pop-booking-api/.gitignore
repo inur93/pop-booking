@@ -4,6 +4,7 @@ build
 target
 *.properties
 filters
+config
 .idea
 WebContent
 *.iml

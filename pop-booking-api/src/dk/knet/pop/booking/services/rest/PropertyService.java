@@ -17,7 +17,7 @@ public class PropertyService {
 	PropertyController controller = ControllerRegistry.getPropertyController();
 	@GET
 	@Path("/{id}")
-	public Property getProperty(@PathParam("id") String id){
+	public Property getProperty(@PathParam("id") Long id){
 		return controller.getProperty(id);
 	}
 }

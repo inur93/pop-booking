@@ -1,22 +1,17 @@
 import React from 'react';
-//misc
-//components
-//controllers
-import BookingController from '../../controllers/BookingController';
 import {observer} from "mobx-react";
 import PropTypes from 'prop-types';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import {extendObservable, transaction} from 'mobx';
+import {decorate, observable, transaction} from 'mobx';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import CreateBooking from "./CreateBooking";
-import StoreRegistry from "../../controllers/StoreRegistry";
 import EditBooking from "./EditBooking";
-import LanguageStore, {D} from "../../controllers/LanguageStore";
-import SecurityStore from "../../controllers/SecurityStore";
+import {D} from '../../D';
 import {toast} from 'react-toastify';
 import {Glyphicon} from "react-bootstrap";
 import FloatingBtn from "../shared/FloatingBtn";
+import ViewBooking from "./ViewBooking";
 
 
 BigCalendar.momentLocalizer(moment);
@@ -31,28 +26,18 @@ class BookingCalendar extends React.Component {
     }
     modals = {
         EDIT_BOOKING: 'editBooking',
-        CREATE_BOOKING: 'createBooking'
+        CREATE_BOOKING: 'createBooking',
+        VIEW_BOOKING: 'viewBooking'
     }
-    currentDate;
-    selectedStartDate;
-    selectedEndDate;
+    currentDate = new Date();
+    selectedStartDate = new Date();
+    selectedEndDate = new Date();
 
-    currentModal;
-    currentBooking;
+    currentModal = null;
+    currentBooking = null;
 
-    currentView;
+    currentView = this.views.MONTH;
 
-    constructor(myProps) {
-        super();
-        extendObservable(this, {
-            currentDate: new Date(),
-            selectedStartDate: new Date(),
-            selectedEndDate: new Date(),
-            currentModal: null,
-            currentBooking: null,
-            currentView: this.views.MONTH
-        })
-    }
 
     onNavigate = (date, view, action) => {
         this.currentDate = date;
@@ -63,15 +48,15 @@ class BookingCalendar extends React.Component {
     }
 
     onSelectSlot = (selection) => {
-        if(selection.action === 'click' && this.currentView !== this.views.DAY){
+        if (selection.action === 'click' && this.currentView !== this.views.DAY) {
             transaction(() => {
                 this.currentDate = selection.start;
                 this.currentView = this.views.DAY;
             });
             return;
         }
-        if (!SecurityStore.isLoggedIn) {
-            toast.info(LanguageStore.INFO_BOOKING_CREATE_LOGIN_REQUIRED);
+        if (!this.props.stores.security.isLoggedIn) {
+            toast.info(D('You have to be logged in to make a booking'));
             return;
         }
         //action, start, end, slots(array of dates)
@@ -83,12 +68,13 @@ class BookingCalendar extends React.Component {
     }
 
     onSelectEvent = (booking, evt) => {
-        if (!SecurityStore.isLoggedIn) {
-            toast.info(LanguageStore.INFO_BOOKING_UPDATE_LOGIN_REQUIRED);
+        if (!this.props.stores.security.isLoggedIn) {
+            this.currentBooking = booking;
+            this.currentModal = this.modals.VIEW_BOOKING;
             return;
         }
-        if (SecurityStore.user.id !== booking.booker.id) {
-            toast.info(LanguageStore.INFO_BOOKING_OWNED_BY_OTHER_USER);
+        if (this.props.stores.security.user.id !== booking.booker.id) {
+            toast.info(D('You are not allowed to edit this booking'));
             return;
         }
         this.currentBooking = booking;
@@ -144,13 +130,14 @@ class BookingCalendar extends React.Component {
     }
 
     render() {
-        const {bookings} = this.props.bookingStore;
-        const {isLoggedIn} = SecurityStore;
-        const { language} = LanguageStore;
+        const {booking, security, language: langStore } = this.props.stores;
+        const {isLoggedIn} = security;
+        const {language} = langStore;
+        const {bookings} = booking;
         const messages = {
             allDay: D('All day'),
-            previous: <Glyphicon glyph='chevron-left' />,
-            next: <Glyphicon glyph='chevron-right' />,
+            previous: <Glyphicon glyph='chevron-left'/>,
+            next: <Glyphicon glyph='chevron-right'/>,
             today: <Glyphicon glyph='screenshot'/>,
             month: D('Month'),
             week: D('Week'),
@@ -163,17 +150,22 @@ class BookingCalendar extends React.Component {
                 return D('Show more') + " +" + num;
             }
         }
+
+        const {stores} = this.props;
         return (
 
             <div style={{height: 'calc(100vh - 100px)'}}>
                 {(this.currentModal === this.modals.CREATE_BOOKING) &&
-                <CreateBooking bookableItemStore={StoreRegistry.getBookableItemStore()}
+                <CreateBooking bookableItemStore={stores.bookableItem} bookingStore={stores.booking} locale={language}
                                defaultFrom={this.selectedStartDate} defaultTo={this.selectedEndDate}
                                onExit={() => this.currentModal = null}/>}
                 {(this.currentModal === this.modals.EDIT_BOOKING) &&
-                <EditBooking bookableItemStore={StoreRegistry.getBookableItemStore()}
+                <EditBooking store={stores.booking} locale={language}
                              booking={this.currentBooking}
                              onExit={() => this.currentModal = null}/>}
+                {(this.currentModal === this.modals.VIEW_BOOKING) &&
+                <ViewBooking onExit={() => this.currentModal = null}
+                             booking={this.currentBooking}/>}
 
                 <BigCalendar
                     onView={this.onView}
@@ -213,13 +205,20 @@ class BookingCalendar extends React.Component {
     }
 }
 
-/*startAccessor='startDate'
-endAccessor='endDate'*/
 export default observer(BookingCalendar);
 
 BookingCalendar.propTypes = {
-    bookingStore: PropTypes.instanceOf(BookingController)
-}
+    stores: PropTypes.object
+};
+
+decorate(BookingCalendar, {
+    currentDate: observable,
+    selectedStartDate: observable,
+    selectedEndDate: observable,
+    currentModal: observable,
+    currentBooking: observable,
+    currentView: observable
+});
 
 const Event = ({event}) => {
     //debugger;

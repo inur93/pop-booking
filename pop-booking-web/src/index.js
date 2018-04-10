@@ -1,24 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RestClient from './shared/RestClient';
+import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
+import './stylesheets/css/App.css'
+
 import './stylesheets/css/index.css';
+import './stylesheets/css/select.css'
 
 import App from "./App";
-import LanguageStore from "./controllers/LanguageStore";
-import ErrorPage from "./shared/ErrorPage";
+import {stores} from "./controllers/Context";
+import {HashRouter} from "react-router-dom";
 
-LanguageStore.init()
-    .then(() => {
-        ReactDOM.render(
-            <App />,
-            document.getElementById('main-content')
-        );
-    })
-    .catch(() => {
-        ReactDOM.render(
-            <ErrorPage />,
-            document.getElementById('main-content')
-        )
-    });
 
+ReactDOM.render(
+    <HashRouter>
+    <App stores={stores}/>
+    </HashRouter>,
+    document.getElementById('main-content')
+)
 

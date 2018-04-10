@@ -47,5 +47,17 @@ public class Booking {
 	
 	@ManyToOne
 	private BookingUser booker;
-	
+
+	@Override
+	public int hashCode(){
+		return (id.intValue());
+	}
+
+	@Override
+	public String toString() {
+		String str = "id=" + this.id + ";dateFrom=" + this.dateFrom + ";dateTo=" + this.dateTo;
+		if(booker != null) str += ";bookerId=" + booker.getId();
+		if(bookableItem != null) str += ";bookableItemId=" + bookableItem.getId();
+		return str;
+	}
 }
