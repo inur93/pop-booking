@@ -68,17 +68,14 @@ class BookingCalendar extends React.Component {
     }
 
     onSelectEvent = (booking, evt) => {
-        if (!this.props.stores.security.isLoggedIn) {
+        if (!this.props.stores.security.isLoggedIn || (this.props.stores.security.user.id !== booking.booker.id)) {
             this.currentBooking = booking;
             this.currentModal = this.modals.VIEW_BOOKING;
             return;
+        }else {
+            this.currentBooking = booking;
+            this.currentModal = this.modals.EDIT_BOOKING;
         }
-        if (this.props.stores.security.user.id !== booking.booker.id) {
-            toast.info(D('You are not allowed to edit this booking'));
-            return;
-        }
-        this.currentBooking = booking;
-        this.currentModal = this.modals.EDIT_BOOKING;
     }
 
     onSelecting = ({start, end}) => {
@@ -147,7 +144,7 @@ class BookingCalendar extends React.Component {
             time: D('Time'),
             event: D('Event'),
             showMore: (num) => {
-                return D('Show more') + " +" + num;
+                return `${D('Show more')} +${num}`;
             }
         }
 
@@ -219,35 +216,3 @@ decorate(BookingCalendar, {
     currentBooking: observable,
     currentView: observable
 });
-
-const Event = ({event}) => {
-    //debugger;
-    return (
-        <span style={{backgroundColor: 'red'}}>
-      <strong>{event.title}</strong>
-            {event.desc && ':  ' + event.desc}
-    </span>
-    )
-}
-
-/*
-view: 'month',
-  events: [],
-  selectable: true,
-  header: {
-    left: 'agendaDay,basicWeek,month',
-    center: 'title',
-    right: 'today prev,next',
-  },
-  customButtons: {},
-  defaultDate: null,
-  nowIndicator: true,
-  locale: 'en-gb',
-  eventStartEditable: true,
-  eventDurationEditable: true,
- */
-
-// Data Types: 	event - {title, id, start, (end), whatever } 	location - {
-// start, (end), allDay } 	rawEventRange - { start, end } 	eventRange - { start,
-// end, isStart, isEnd } 	eventSpan - { start, end, isStart, isEnd, whatever }
-// 	eventSeg - { event, whatever } 	seg - { whatever }

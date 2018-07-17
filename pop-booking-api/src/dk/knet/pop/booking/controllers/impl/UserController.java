@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import dk.knet.pop.booking.configs.Configs;
 import dk.knet.pop.booking.database.UserDAO;
 import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.exceptions.InvalidArgsException;
@@ -22,14 +23,7 @@ public class UserController {
 	private UserDAO dao = new UserDAO();
 	
 	public UserController(){
-		String readValue = ConfigManager.USER_CACHE_TIMEOUT;
-		int value = 24;
-		try{
-			value = Integer.valueOf(readValue);
-		}catch(Exception e){
-			value = 24;
-		}
-		userCacheTimeout = value;
+		userCacheTimeout = Configs.USER_CACHE_TIMEOUT;
 	}
 	
 	public BookingUser updateUser(String username){

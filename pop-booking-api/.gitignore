@@ -5,6 +5,7 @@ target
 *.properties
 filters
 config
-.idea
+.idea/
 WebContent
 *.iml
+*.log

@@ -1,5 +1,7 @@
 import {decorate, observable} from 'mobx';
 import User from "../models/User";
+import {toast} from 'react-toastify';
+import {D} from "../D";
 
 /*
 created: 24-03-2018
@@ -37,7 +39,11 @@ export default class UserStore {
     }
 
     updateSelf = (user) => {
-        return this.client.PUT(`/v1/users/self`, user);
+        return this.client.PUT(`/v1/users/self`, user)
+            .then(user => {
+                toast.success(D('Your information has been updated'));
+                return user;
+            });
     }
 
     fetchCurrentUser = () => {

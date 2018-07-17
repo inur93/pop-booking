@@ -8,7 +8,7 @@ import java.util.Date;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dk.knet.pop.booking.controllers.impl.ConfigManager;
+import dk.knet.pop.booking.configs.Configs;
 import dk.knet.pop.booking.models.Role;
 import dk.knet.pop.booking.models.BookingUser;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -49,7 +49,7 @@ public class JWTHandler {
 
 	public static JWTHandler getInstance(){
 		if(handler==null) {
-			if (!ConfigManager.DEBUG) {
+			if (!Configs.DEBUG) {
 				log.error("Deploying to Production - generating key!");
 				String keyString = generateSecret();
 				handler = new JWTHandler(keyString, SignatureAlgorithm.HS512);

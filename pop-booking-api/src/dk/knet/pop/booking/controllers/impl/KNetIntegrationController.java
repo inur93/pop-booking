@@ -6,6 +6,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dk.knet.pop.booking.configs.Configs;
 import dk.knet.pop.booking.models.BookingUser;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.jersey.client.ClientProperties;
@@ -18,14 +19,14 @@ import dk.knet.pop.booking.models.knet.KnetVlan;
 @Slf4j
 public class KNetIntegrationController {
 
-	private final String targetUrl = ConfigManager.K_NET_API_URL;// "https://k-net.dk/api/v2/network/";
+	private final String targetUrl = Configs.K_NET_API_URL;// "https://k-net.dk/api/v2/network/";
 	private final String userPath = "user";
 	private final String vlanPath = "vlan";
 	private final String queryParamFormatKey = "format";
 	private final String queryParamFormatValue = "json";
 	private final String queryParamUsernameKey = "username";
-	private final String username = ConfigManager.USERNAME;
-	private final String password = ConfigManager.PASSWORD;
+	private final String username = Configs.USERNAME;
+	private final String password = Configs.PASSWORD;
 
 	private Client client = null;
 	public KnetUser getUserByUsername(String username){

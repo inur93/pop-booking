@@ -1,5 +1,6 @@
 package dk.knet.pop.booking.controllers;
 
+import dk.knet.pop.booking.configs.Configs;
 import dk.knet.pop.booking.controllers.impl.*;
 
 /**
@@ -11,7 +12,7 @@ public class ControllerRegistry {
 
 
     public static IAuthenticationController getAuthenticationController() {
-        return ConfigManager.DEBUG ? new AuthenticationControllerLocalhost() : new AuthenticationController();
+        return Configs.DEBUG ? new AuthenticationControllerLocalhost() : new AuthenticationController();
     }
 
     public static BookableObjectController getBookableObjectController() {

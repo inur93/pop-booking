@@ -58,16 +58,10 @@ public class BookingService extends ProtectedService {
 
 	@POST @Path("/create")
 	public List<Booking> createMultipleBookings(List<Booking> bookings) throws BasicException{
-
 		BookingUser user = checkTokenAndRole(Role.DEFAULT, Role.ADMIN, Role.EDITOR);
-		List<Booking> created = new ArrayList<>();
 		if (user != null) 
 		{
-			for(Booking booking : bookings){
-				booking.setBooker(user); //make sure user books on his own behalf
-				created.add(bookingController.createBooking(booking));
-			}
-			return created;
+			return bookingController.createMultipleBookings(bookings, user);
 		}
 		throw new BasicException(Response.Status.BAD_REQUEST, ERROR_BOOKING_UNKNOWN);
 		//return new Message("Booking created successfully");

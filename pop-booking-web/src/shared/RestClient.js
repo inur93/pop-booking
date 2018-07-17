@@ -16,9 +16,6 @@ const handleErrors = err => {
     if(err && !err.status){
         toast.error(D("No internet connection"));
     }
-    if (err && err.response && (err.response.status === 401 || err.response.status === 403)) {
-        context.token = null;
-    }
 
     if(err && err.response && err.response.body){
         toast.error(D(err.response.body.message));

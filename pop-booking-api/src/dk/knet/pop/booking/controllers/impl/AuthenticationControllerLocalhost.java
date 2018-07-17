@@ -1,5 +1,6 @@
 package dk.knet.pop.booking.controllers.impl;
 
+import dk.knet.pop.booking.configs.Configs;
 import dk.knet.pop.booking.database.UserDAO;
 import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.models.BookingUser;
@@ -21,8 +22,8 @@ public class AuthenticationControllerLocalhost extends AuthenticationController 
 
     private UserDAO dao = new UserDAO();
     private Client client = null;
-    private final String captchaAuthUrl = ConfigManager.CAPTCHA_URL;
-    private final String captchaSecret = ConfigManager.CAPTCHA_SECRET;
+    private final String captchaAuthUrl = Configs.CAPTCHA_URL;
+    private final String captchaSecret = Configs.CAPTCHA_SECRET;
 
     @Override
     public BookingUser authenticate(LoginUserViewModel userModel) throws BasicException {
@@ -36,15 +37,9 @@ public class AuthenticationControllerLocalhost extends AuthenticationController 
         }
 
         if (checkPassword(userModel.getPassword(), user.getPassword())) {
-            JWTHandler handler = JWTHandler.getInstance();
-            String token = handler.createJWT(user, 1000 * 36L);
-            user.setToken(token);
-            ////System.out.println("user authenticated: " + token);
+            return user;
         } else {
             throw new BasicException(Response.Status.UNAUTHORIZED, ERROR_INVALID_CREDENTIALS);
         }
-        user.setPassword(null);
-
-        return user;
     }
 }

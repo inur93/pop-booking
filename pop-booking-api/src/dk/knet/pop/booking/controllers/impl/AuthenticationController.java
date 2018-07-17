@@ -7,9 +7,11 @@ import java.util.Formatter;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response.Status;
 
+import dk.knet.pop.booking.configs.Configs;
 import dk.knet.pop.booking.controllers.IAuthenticationController;
 import dk.knet.pop.booking.viewmodels.LoginUserViewModel;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +22,15 @@ import dk.knet.pop.booking.models.BookingUser;
 import dk.knet.pop.booking.viewmodels.CaptchaResponse;
 import dk.knet.pop.booking.security.JWTHandler;
 
-import static dk.knet.pop.booking.controllers.impl.ConfigManager.CAPTCHA_ENABLED;
+import static dk.knet.pop.booking.configs.Configs.CAPTCHA_ENABLED;
 
 @Slf4j
 public class AuthenticationController implements IAuthenticationController{
 
 	private UserController userController = new UserController();
 	private Client client = null;
-	private final String captchaAuthUrl = ConfigManager.CAPTCHA_URL;
-	private final String captchaSecret = ConfigManager.CAPTCHA_SECRET;
+	private final String captchaAuthUrl = Configs.CAPTCHA_URL;
+	private final String captchaSecret = Configs.CAPTCHA_SECRET;
 	public BookingUser authenticate(LoginUserViewModel userModel) throws BasicException{
 
 		if(CAPTCHA_ENABLED && !validateCaptcha(userModel.getCaptchaToken())){
@@ -48,19 +50,35 @@ public class AuthenticationController implements IAuthenticationController{
 		}
 
 		if(checkPassword(userModel.getPassword(), user.getPassword())){
-			JWTHandler handler =JWTHandler.getInstance();
-			String token = handler.createJWT(user, 1000*36L);
-			user.setToken(token);
-			////System.out.println("user authenticated: " + token);
+			return user;
 		}else{
 			throw new BasicException(Status.UNAUTHORIZED, "Username or password is incorrect");
 		}
+	}
 
-		return user;
+	public static void main(String[] args) {
+		String popPassword = "sha1$fYM18xXarLHS$df4827b804b3068d415eef1cbd16ee9584f006eb";
+		String booPassword = "sha1$wk9Jc7mHnLCD$60877f823a30950ee2cdfccfd6791de619cc38fb";
+		AuthenticationController authenticationController = new AuthenticationController();
+		boolean test1 = authenticationController.checkPassword("nynne131", popPassword);
+		boolean test2 = authenticationController.checkPassword("nynne131", booPassword);
+
+		//.checkPassword("nynne131", "sha1$wk9Jc7mHnLCD$60877f823a30950ee2cdfccfd6791de619cc38fb");
+		System.out.println("test: " + test1);
+		System.out.println("test: " + test2);
 	}
 
 	protected boolean checkPassword(String password, String hashedPassword){
+		if(hashedPassword == null)
+		{
+			log.warn("invalid hashed password: null");
+			return false;
+		}
 		String[] parts = hashedPassword.split("\\$");
+		if(parts.length < 3){
+			log.error("hashed password invalid format. algorithm, salt or hash was missing from string");
+			return false;
+		}
 		String alg = parts[0];
 		String salt = parts[1];
 		String hash = parts[2];
@@ -98,6 +116,7 @@ public class AuthenticationController implements IAuthenticationController{
 	}
 
 	private boolean validateCaptcha(String token){
+		if(token == null) return false;
 		client = ClientBuilder.newBuilder().build();
 
 		HttpAuthenticationFeature feature = HttpAuthenticationFeature
@@ -107,16 +126,13 @@ public class AuthenticationController implements IAuthenticationController{
 
 		WebTarget target = client
 				.target(captchaAuthUrl)
-				.queryParam("secret", this.captchaSecret)
-				.queryParam("response", token);
-
+                .queryParam("secret", captchaSecret)
+                .queryParam("response", token);
 
 		try {
 			CaptchaResponse response = target
-//				.request(MediaType.APPLICATION_JSON)
 					.request("application/x-www-form-urlencoded")
-					.header("Content-length", "0")
-					.post(null, CaptchaResponse.class);
+					.post(Entity.json(new CaptchaRequest(captchaSecret, token)), CaptchaResponse.class);
 			return response.isSuccess();
 		}catch (Exception e){
 			log.error("Captcha error, response failed", e);
@@ -124,4 +140,13 @@ public class AuthenticationController implements IAuthenticationController{
 		return false;
 	}
 
+	public static class CaptchaRequest{
+	    public String secret;
+	    public String response;
+
+	    public CaptchaRequest(String secret, String response){
+	        this.secret = secret;
+	        this.response = response;
+        }
+    }
 }

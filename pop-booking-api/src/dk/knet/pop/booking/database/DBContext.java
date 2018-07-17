@@ -13,27 +13,36 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static dk.vormadal.configservice.Configuration.get;
+
 public class DBContext {
 
-    private Session session;
     private SessionFactory factory;
 
     private static DBContext instance;
 
     public static DBContext getInstance() {
-        if (instance == null) instance = new DBContext(SessionRegistry.getSessionFactory());
+        if (instance == null) instance = new DBContext();
         return instance;
     }
 
-    private DBContext(SessionFactory sessionFactory) {
-        factory = sessionFactory;
-        this.session = factory.openSession();
+    private DBContext() {
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure() // configures settings from hibernate.cfg.xml
+                .applySetting("hibernate.connection.username", get("hibernate.connection.username"))
+                .applySetting("hibernate.connection.password", get("hibernate.connection.password"))
+                .applySetting("hibernate.connection.url", get("hibernate.connection.url"))
+                .applySetting("hibernate.show_sql", get("hibernate.show_sql"))
+                .applySetting("hibernate.current_session_context_class", get("hibernate.current_session_context_class"))
+                .applySetting("hibernate.hbm2ddl.auto", get("hibernate.hbm2ddl.auto"))
+                .build();
+        factory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
     }
 
     public Session getCurrentSession() {
-        if (!this.session.isOpen())
-            this.session = factory.openSession();
-        return this.session;
+        if (!this.factory.getCurrentSession().isOpen())
+            return this.factory.openSession();
+        return this.factory.getCurrentSession();
     }
 
     public static void setup() {
@@ -41,26 +50,32 @@ public class DBContext {
     }
 
     private void setupDatabase() {
-        session.beginTransaction();
+        getCurrentSession().beginTransaction();
         setupLanguages();
         setupBookableItems();
-        session.getTransaction().commit();
+        getCurrentSession().getTransaction().commit();
 
     }
 
     private void setupLanguages() {
-        List<Language> languages = session.createQuery("from Language", Language.class).getResultList();
+        /*#############################
+        Incomment to automatically create default languages on startup
+         ##############################*/
+       /* List<Language> languages = session.createQuery("from Language", Language.class).getResultList();
         if (languages.size() > 0) return;
 
         session.save(Language.builder().name("en").displayName("EN").build());
         session.save(Language.builder().name("da").displayName("DA").build());
-        session.flush();
+        session.flush();*/
 
     }
 
     private void setupBookableItems() {
 
-        List<BookableItem> existing = session.createQuery("from BookableItem", BookableItem.class).getResultList();
+        /*##############################
+        Incomment to automatically create default bookable items on startup
+         ###############################*/
+       /* List<BookableItem> existing = session.createQuery("from BookableItem", BookableItem.class).getResultList();
         if (existing.size() > 0) return;
 
         session.save(createBookableItem(BookingType.KANOO_AND_KAJAK, "Canoe 1", "#997ff3", 8));
@@ -72,7 +87,7 @@ public class DBContext {
         session.save(createBookableItem(BookingType.KANOO_AND_KAJAK, "Kayak 3 (Coast spirit)", "#aee47a", 8));
         session.save(createBookableItem(BookingType.KANOO_AND_KAJAK, "Kayak 4 (Baffin)", "#aee47a", 8));
         session.save(createBookableItem(BookingType.MEETINGROOM, "Meetingroom", "#d558e8", 2));
-        session.flush();
+        session.flush();*/
 
 
     }

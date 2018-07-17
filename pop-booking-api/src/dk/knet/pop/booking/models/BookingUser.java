@@ -24,10 +24,10 @@ public class BookingUser {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Transient @JsonIgnore
+	/*@Transient @JsonIgnore
 	private String token;
 	@Transient @JsonIgnore
-	private String captchaToken;
+	private String captchaToken;*/
 	@JsonIgnore
 	private String tokenHash;
 	private Boolean isUserActive;

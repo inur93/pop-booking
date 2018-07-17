@@ -60,8 +60,9 @@ public class BasicDAO<T> {
 
     @SuppressWarnings("unchecked")
     public List<T> getPage(int noPrPage, int page) {
-        List<T> jpaObjects = null;
 
+        List<T> jpaObjects = null;
+        s.clear();
         Query q = s.createQuery("from " + type.getSimpleName(), type);
         q.setFirstResult(noPrPage * page);
         q.setMaxResults(noPrPage);

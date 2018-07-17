@@ -34,9 +34,6 @@ public class AuthenticationService extends ProtectedService {
         BookingUser user = authCtrl.authenticate(userModel);
         if(user != null) {
             String token = setHeaders(user);
-            userModel.setPassword(null);
-            userModel.setCaptchaToken(null);
-            userModel.setTokenHash(null);
             userModel.setToken(token);
             return userModel;
         }else{

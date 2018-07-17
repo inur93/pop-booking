@@ -58,14 +58,14 @@ public class UserService extends ProtectedService {
     @GET
     @Path("/self")
     public BookingUser getSelf() throws BasicException {
-        BookingUser user = checkTokenAndRole(Role.DEFAULT);
+        BookingUser user = checkTokenAndRole();
         return dao.getById(user.getId());
     }
 
     @PUT
     @Path("/self")
     public BookingUser updateSelf(BookingUser self) throws BasicException {
-        BookingUser user = checkTokenAndRole(Role.DEFAULT);
+        BookingUser user = checkTokenAndRole();
         if(user.getId() == self.getId()) {
             BookingUser existing = dao.getById(self.getId());
             existing.setRoles(self.getRoles());

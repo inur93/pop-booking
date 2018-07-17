@@ -6,24 +6,14 @@
 	<session-factory>
 
 		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="connection.url">${hibernate.connection.url}</property>
-		<property name="connection.username">${hibernate.connection.username}</property>
-		<property name="connection.password">${hibernate.connection.password}</property>
+
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
-
-
-		<!-- Outputs the SQL queries, should be disabled in production -->
-		<property name="hibernate.show_sql">${hibernate.show.sql}</property>
 
 		<!-- Statistics to analyze performance, turn off in production -->
 		<property name="hibernate.generate_statistics">false</property>
 
 		<!-- Choose between connection pool or development, use pool in production -->
-
-		<!-- <property name="hibernate.current_session_context_class">thread</property> 
-			<property name="connection.pool_size">1</property> -->
-		<property name="hibernate.current_session_context_class">${hibernate.current.session.context.class}</property>
 
 		<property name="hibernate.c3p0.min_size">5</property>
 		<property name="hibernate.c3p0.max_size">20</property>
@@ -34,7 +24,9 @@
 		<!-- Auto create empty schema on every application start, DISABLE in production -->
 		<!-- READ https://docs.jboss.org/hibernate/orm/5.0/manual/en-US/html/ch03.html 
 			for values -->
-		<property name="hibernate.hbm2ddl.auto">update</property>
+<!--
+		<property name="hibernate.hbm2ddl.auto">validate</property>
+-->
 
 		<!-- Just createOrUpdate schema with changes on application start, DISABLE in production -->
 		<!-- <property name="hibernate.hbm2ddl.auto">createOrUpdate</property> -->

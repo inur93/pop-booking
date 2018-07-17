@@ -19,7 +19,6 @@ import javax.persistence.Transient;
 public class LoginUserViewModel {
     private String token;
     private String captchaToken;
-    private String tokenHash;
     private Boolean isUserActive;
     private String username;
 

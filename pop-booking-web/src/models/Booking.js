@@ -22,7 +22,7 @@ export default class Booking {
     }
 
     get title(){
-        return D(this.bookableItem.name) + ": " + (this.booker.roomNo || this.booker.name || this.booker.username);
+        return D(this.bookableItem.name) + ": " + (this.booker.roomNo || this.booker.name || D("(unknown user)"));
     }
 
     get selectable(){
