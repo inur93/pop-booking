@@ -8,6 +8,7 @@ export default class Booking {
 
     id;
 
+    created;
     dateFrom;
     dateTo;
     booker;

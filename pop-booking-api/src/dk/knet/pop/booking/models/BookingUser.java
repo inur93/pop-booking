@@ -47,7 +47,6 @@ public class BookingUser {
     @Enumerated(EnumType.ORDINAL)
 	private Set<Role> roles;
 	
-	
 	@Override
 	public String toString() {
 		return "id=" + id + ";name=" + username + ";isActive=" + isUserActive + ";roles=" + roles;

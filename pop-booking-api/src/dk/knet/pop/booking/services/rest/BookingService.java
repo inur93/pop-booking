@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -16,6 +17,7 @@ import dk.knet.pop.booking.exceptions.BasicException;
 import dk.knet.pop.booking.models.Booking;
 import dk.knet.pop.booking.models.BookingUser;
 import dk.knet.pop.booking.models.Role;
+import dk.knet.pop.booking.viewmodels.ViewBooking;
 
 import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_BOOKING_UNKNOWN;
 import static dk.knet.pop.booking.configs.ErrorStrings.ERROR_USER_INVALID;
@@ -32,14 +34,14 @@ public class BookingService extends ProtectedService {
 	public List<Booking> getBookings(@DefaultValue(value="0") @QueryParam("fromDate") long from) throws BasicException {
 		BookingUser user = checkTokenAndRole(Role.DEFAULT);
 		return bookingController.getBookings(user.getId(), new Date(from));
+
 	}
 
 	@GET
 	public List<Booking> getBookings(
 			@QueryParam("start") long from, 
 			@QueryParam("end") long to) {
-		List<Booking> bookings = bookingController.getBookings(new Date(from), new Date(to), null);
-		return bookings;
+		return bookingController.getBookings(new Date(from), new Date(to), null);
 	}
 
 	@POST

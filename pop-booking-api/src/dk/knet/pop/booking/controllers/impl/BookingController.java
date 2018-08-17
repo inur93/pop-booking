@@ -3,6 +3,7 @@ package dk.knet.pop.booking.controllers.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -17,6 +18,7 @@ import dk.knet.pop.booking.models.BookingType;
 import dk.knet.pop.booking.models.BookingUser;
 import dk.knet.pop.booking.models.ClosedPeriod;
 import dk.knet.pop.booking.utils.DateUtil;
+import dk.knet.pop.booking.viewmodels.ViewBooking;
 import lombok.extern.slf4j.Slf4j;
 
 import static dk.knet.pop.booking.configs.ErrorStrings.*;
@@ -59,7 +61,7 @@ public class BookingController {
                 b.setEditable(true);
             }
         }
-        return bookings;
+        return bookings.stream().map(ViewBooking::new).collect(Collectors.toList());
     }
 
 
@@ -174,6 +176,10 @@ public class BookingController {
     }
 
     public List<Booking> getBookings(long userId, Date from) {
-        return dao.getBookingsByUser(userId, from);
+        List<Booking> bookings = dao.getBookingsByUser(userId, from);
+        if(bookings != null){
+            bookings = bookings.stream().map(ViewBooking::new).collect(Collectors.toList());
+        }
+        return bookings;
     }
 }

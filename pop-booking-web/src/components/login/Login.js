@@ -33,6 +33,7 @@ class Login extends Component {
             this.props.onExit();
         }).catch((reason) => {
             this.isLoading = false;
+            this.reset();
         });
     }
 

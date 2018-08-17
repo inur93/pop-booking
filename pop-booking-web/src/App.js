@@ -111,7 +111,7 @@ class App extends Component {
                         <Col xs={12} md={10} mdOffset={1}>
                             <Route exact path="/" render={() => <Home stores={stores}/>}/>
                             <Route path={pages.CALENDAR} render={() => <BookingCalendar stores={stores}/>}/>
-                            <Route path={`${pages.ADMIN}`} render={() => <AdminPage stores={stores}/>}/>
+                            {isAdmin && <Route path={`${pages.ADMIN}`} render={() => <AdminPage stores={stores}/>}/>}
                         </Col>
                         {this.showLogin &&
                         <Login history={history} onExit={() => this.showLogin = false}

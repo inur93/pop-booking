@@ -21,7 +21,7 @@ export default class ViewBooking extends React.Component {
                             <Col xs={12}>
                                 <FormGroup>
                                     <ControlLabel>{D('Booker')}</ControlLabel>
-                                    <FormControl.Static>{`${booker.name || booker.username} ${booker.roomNo}`}</FormControl.Static>
+                                    <FormControl.Static>{`${booker.name || ""} ${booker.roomNo}`}</FormControl.Static>
                                 </FormGroup>
                             </Col>
                             <Col xs={12}>

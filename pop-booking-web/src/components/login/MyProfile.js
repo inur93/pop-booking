@@ -52,8 +52,9 @@ class MyProfile extends Component {
                         </FormGroup>
                         <FormGroup>
                             <ControlLabel>{D('Room number')}</ControlLabel>
-                            <FormControl type="text" value={roomNo} placeholder={D('Room number')}
-                                         onChange={(evt) => this.user.roomNo = evt.target.value}/>
+                            <FormControl.Static>{roomNo}</FormControl.Static>
+                           {/* <FormControl type="text" value={roomNo} placeholder={D('Room number')}
+                                         onChange={(evt) => this.user.roomNo = evt.target.value}/>*/}
                         </FormGroup>
                     </form>
                     }

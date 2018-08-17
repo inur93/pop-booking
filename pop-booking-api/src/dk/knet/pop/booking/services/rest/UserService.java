@@ -33,7 +33,8 @@ public class UserService extends ProtectedService {
     }
 
     @GET
-    public ListWithTotal<BookingUser> getUsers(@QueryParam("query") String query, @QueryParam("page") Integer page, @QueryParam("size") Integer size){
+    public ListWithTotal<BookingUser> getUsers(@QueryParam("query") String query, @QueryParam("page") Integer page, @QueryParam("size") Integer size) throws BasicException {
+        checkTokenAndRole(Role.ADMIN);
         String[] fields = new String[]{"username", "name", "roomNo"};
         List<BookingUser> users;
         if(page != null && size != null){
@@ -68,8 +69,8 @@ public class UserService extends ProtectedService {
         BookingUser user = checkTokenAndRole();
         if(user.getId() == self.getId()) {
             BookingUser existing = dao.getById(self.getId());
-            existing.setRoles(self.getRoles());
-            existing.setRoomNo(self.getRoomNo());
+            //existing.setRoles(self.getRoles());
+            //existing.setRoomNo(self.getRoomNo());
             existing.setName(self.getName());
             return dao.update(existing);
         }
