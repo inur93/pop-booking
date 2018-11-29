@@ -47,14 +47,14 @@ class App extends Component {
                 return user;
             })
         }
-    }
+    };
 
     onLogin = (credentials) => {
         return this.props.stores.security.login(credentials)
             .then(res => {
                 this.showLogin = false;
             })
-    }
+    };
 
     render() {
         const {pages} = this;
@@ -115,7 +115,7 @@ class App extends Component {
                         </Col>
                         {this.showLogin &&
                         <Login history={history} onExit={() => this.showLogin = false}
-                               onLogin={this.onLogin}/>
+                               onLogin={this.onLogin} resetPasswordLink={this.props.stores.security.resetPasswordLink}/>
                         }
                         {this.showMyProfile &&
                         <MyProfile onExit={() => this.showMyProfile = false}

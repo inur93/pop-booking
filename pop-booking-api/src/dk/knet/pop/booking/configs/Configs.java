@@ -17,6 +17,6 @@ public class Configs {
     public static final String CAPTCHA_URL = get("captcha.url");
     public static final String CAPTCHA_SECRET = get("captcha.secret");
     public static final boolean DEBUG = getBool("booking.debug_mode", false);
-    public static final String CONTEXT_USER_KEY = get("booking.user_context_key");
-    public static final boolean CAPTCHA_ENABLED = getBool("captcha.enabled", true);
+    public static final String CONTEXT_USER_KEY = "user";//this is overkill -> get("booking.user_context_key");
+    public static final boolean CAPTCHA_ENABLED = getBool("captcha.enabled", false);
 }

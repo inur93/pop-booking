@@ -14,10 +14,14 @@ export default class SecurityStore {
     path = "/v1/authentication/login";
 
     timer;
+    resetPasswordLink = null;
 
     constructor(client, context) {
         this.client = client;
         this.context = context;
+
+        this.client.GET("/v1/authentication/resetpasswordlink")
+            .then(res => this.resetPasswordLink = res.link);
         // save token to localstorage if set - if token is removed, remove it from storage as well
         reaction(() => this.context.token, token => {
             if (this.timer) clearTimeout(this.timer);
@@ -38,6 +42,8 @@ export default class SecurityStore {
             }
         });
     }
+
+
 
     get claims() {
         return this.decodeClaims(this.context.token);
@@ -65,7 +71,7 @@ export default class SecurityStore {
     login = (credentials) => {
         return this.client.POST(this.path, credentials)
             .then(action((user) => user && (this.context.token = user.token)));
-    }
+    };
 
     logout = (expired) => {
         this.context.token = null;
@@ -87,6 +93,7 @@ export default class SecurityStore {
 
 decorate(SecurityStore, {
     token: observable,
+    resetPasswordLink: observable,
     claims: computed,
     user: computed,
     isLoggedIn: computed,

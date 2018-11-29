@@ -39,11 +39,11 @@ class Login extends Component {
 
     onVerifyCaptcha = (token) => {
         this.captchaToken = token;
-    }
+    };
 
     loadCaptcha = () => {
 
-    }
+    };
 
     render() {
 
@@ -73,6 +73,10 @@ class Login extends Component {
                                    onloadCallback={this.loadCaptcha}
                                    className="btn btn-default btn-primary"
                                    value="Log in"/>
+                        <FormGroup>
+                            {this.props.resetPasswordLink && D('Forgotten password? ')}
+                            {this.props.resetPasswordLink && <a target="_blank" href={this.props.resetPasswordLink}>{D('Click to reset password')}</a>}
+                        </FormGroup>
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -89,7 +93,8 @@ export default observer(Login);
 
 Login.propTypes = {
     onExit: PropTypes.func,
-    onLogin: PropTypes.func.isRequired
+    onLogin: PropTypes.func.isRequired,
+    resetPasswordLink: PropTypes.string
 };
 
 decorate(Login, {

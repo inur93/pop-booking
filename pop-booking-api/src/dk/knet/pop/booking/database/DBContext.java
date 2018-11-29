@@ -32,9 +32,9 @@ public class DBContext {
                 .applySetting("hibernate.connection.username", get("hibernate.connection.username"))
                 .applySetting("hibernate.connection.password", get("hibernate.connection.password"))
                 .applySetting("hibernate.connection.url", get("hibernate.connection.url"))
-                .applySetting("hibernate.show_sql", get("hibernate.show_sql"))
-                .applySetting("hibernate.current_session_context_class", get("hibernate.current_session_context_class"))
-                .applySetting("hibernate.hbm2ddl.auto", get("hibernate.hbm2ddl.auto"))
+                .applySetting("hibernate.show_sql", get("hibernate.show_sql", "false"))
+                .applySetting("hibernate.current_session_context_class", get("hibernate.current_session_context_class", "managed"))
+                .applySetting("hibernate.hbm2ddl.auto", get("hibernate.hbm2ddl.auto", "update"))
                 .build();
         factory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
     }

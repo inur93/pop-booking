@@ -3,18 +3,22 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pop</groupId>
     <artifactId>popbooking</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
-        <jersey2.version>2.23.1</jersey2.version>
-        <jaxrs.version>2.0.1</jaxrs.version>
+        <failOnMissingWebXml>true</failOnMissingWebXml>
+        <jersey2.version>2.27</jersey2.version>
+        <jaxb-api.version>2.3.0</jaxb-api.version>
+        <jaxrs.version>2.1</jaxrs.version>
+        <hibernate.version>5.2.1.Final</hibernate.version>
         <webProject>pop-booking-web</webProject>
     </properties>
+
     <build>
         <finalName>popbooking</finalName>
+        <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -24,6 +28,51 @@
                     <source>10</source>
                     <target>10</target>
                 </configuration>
+            </plugin>
+            <!-- loading environment specific configurations-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>resources/${env}.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <webXml>WebContent\WEB-INF\web.xml</webXml>
+                </configuration>
+            </plugin>
+            <!-- cleanup environment specific configuration files when they have served their purpose -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete file="${project.build.outputDirectory}/dev.properties"/>
+                                <delete file="${project.build.outputDirectory}/prod.properties"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
@@ -42,16 +91,12 @@
             </activation>
             <properties>
                 <env>dev</env>
-                <config_file_location>C:/configs/pop/booking.properties</config_file_location>
-                <log4j.file_location>popbooking.log</log4j.file_location>
             </properties>
         </profile>
         <profile>
             <id>Production</id>
             <properties>
                 <env>prod</env>
-                <config_file_location>/opt/tomcat/conf/booking.properties</config_file_location>
-                <log4j.file_location>/opt/tomcat/logs/popbooking.log</log4j.file_location>
             </properties>
         </profile>
         <profile>
@@ -74,7 +119,7 @@
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
-                                        <argument>${env}-build</argument>
+                                        <argument>build</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -167,6 +212,15 @@
             <artifactId>jersey-client</artifactId>
             <version>${jersey2.version}</version>
         </dependency>
+        <!-- this is needed in version 2.26 and onwards
+        https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2 -->
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey2.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -179,17 +233,17 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb-api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb-api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb-api.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
@@ -227,17 +281,17 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.2.1.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>5.2.1.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>5.2.1.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

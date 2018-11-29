@@ -1,26 +1,23 @@
 package dk.knet.pop.booking.controllers.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Formatter;
+import dk.knet.pop.booking.configs.Configs;
+import dk.knet.pop.booking.controllers.IAuthenticationController;
+import dk.knet.pop.booking.exceptions.BasicException;
+import dk.knet.pop.booking.models.BookingUser;
+import dk.knet.pop.booking.viewmodels.CaptchaResponse;
+import dk.knet.pop.booking.viewmodels.LoginUserViewModel;
+import lombok.extern.slf4j.Slf4j;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response.Status;
-
-import dk.knet.pop.booking.configs.Configs;
-import dk.knet.pop.booking.controllers.IAuthenticationController;
-import dk.knet.pop.booking.viewmodels.LoginUserViewModel;
-import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-
-import dk.knet.pop.booking.exceptions.BasicException;
-import dk.knet.pop.booking.models.BookingUser;
-import dk.knet.pop.booking.viewmodels.CaptchaResponse;
-import dk.knet.pop.booking.security.JWTHandler;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 
 import static dk.knet.pop.booking.configs.Configs.CAPTCHA_ENABLED;
 
@@ -54,18 +51,6 @@ public class AuthenticationController implements IAuthenticationController{
 		}else{
 			throw new BasicException(Status.UNAUTHORIZED, "Username or password is incorrect");
 		}
-	}
-
-	public static void main(String[] args) {
-		String popPassword = "sha1$fYM18xXarLHS$df4827b804b3068d415eef1cbd16ee9584f006eb";
-		String booPassword = "sha1$wk9Jc7mHnLCD$60877f823a30950ee2cdfccfd6791de619cc38fb";
-		AuthenticationController authenticationController = new AuthenticationController();
-		boolean test1 = authenticationController.checkPassword("nynne131", popPassword);
-		boolean test2 = authenticationController.checkPassword("nynne131", booPassword);
-
-		//.checkPassword("nynne131", "sha1$wk9Jc7mHnLCD$60877f823a30950ee2cdfccfd6791de619cc38fb");
-		System.out.println("test: " + test1);
-		System.out.println("test: " + test2);
 	}
 
 	protected boolean checkPassword(String password, String hashedPassword){
