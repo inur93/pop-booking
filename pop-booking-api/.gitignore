@@ -8,6 +8,5 @@ log4j.properties
 filters
 config
 .idea/
-WebContent
 *.iml
 *.log
