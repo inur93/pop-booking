@@ -65,6 +65,22 @@ log4j.rootLogger=WARN, stdout, file
 
 Note the `log4j.appender.file.File` property which uses the environment specific value described in the Build section.
 
+### Configure the react app ###
+In the folder where the `package.json` is found. Create two configuration files:
+    
+    - development.env, will be used when running `npm start` 
+    - production.env, will be used when running `npm run build`
+ 
+ Each with the following configurations:
+ ```properties
+ API_HOST=<relative or absolute url to api>
+ MEETINGROOM_START_TIME=8:00
+ MEETINGROOM_END_TIME=22:00
+ KANOO_START_TIME=8:00
+ KANOO_END_TIME=22:00
+ CAPTCHA_SITE_KEY=<the captcha api key found in google console>
+ ```
+
 ## Build ##
 To build the project including the web application is very time consuming due to the production optimizations process for the React app.
 Therefore we have to different build processes for the dev environment and production.
@@ -80,6 +96,7 @@ The `pom.xml` includes 4 profiles which can be used for the build process:
     4. Copy react app
         Copies the React app into the target folder so that
         when the war file is generated the React app will be included.
+            
         
 ### Development environment ###
 
@@ -102,6 +119,13 @@ This guide is similar to the one for the development environment, with some smal
     4. Run `mvn clean package -P "Production,Copy react app"` alternatively include the 'Build react app' profile if the React app should be recompiled.
     5. Now the target folder should contain a war file that you can deploy to the production tomcat server.
 
+## Known issues ##
+
+### NPM ERR ###
+Check that you have run `npm install` before you are running the build.
+
+### 'node-sass' is not recognized as an interl or external command ###
+install node-sass globally by running `npm install -g node-sass`
 ## Server setup ##
 
 ## Deploy ##

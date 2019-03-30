@@ -5,7 +5,6 @@ target
 dev.properties
 prod.properties
 log4j.properties
-filters
 config
 .idea/
 *.iml
