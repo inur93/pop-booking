@@ -7,16 +7,18 @@ import org.hibernate.StaleObjectStateException;
 import javax.annotation.Priority;
 import javax.servlet.*;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.ext.Provider;
 
 /**
  * Created: 23-03-2018
  * Owner: Runi
  */
+@Provider
 @Priority(1100)
 @Slf4j
 public class HibernateFilter implements Filter {
 
-    DBContext context;
+    private DBContext context;
 
     public HibernateFilter(){
         log.error("Hibernate filter");
