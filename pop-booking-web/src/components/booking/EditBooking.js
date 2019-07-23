@@ -87,7 +87,7 @@ class EditBooking extends Component {
 
     render() {
         const {onExit, booking} = this.props;
-        const {fromDate, fromTime, toDate, toTime, isLoading} = this;
+        const {fromDate, fromTime, toDate, toTime} = this;
         const {bookableItem} = booking;
         let hasChange = true;
 
@@ -138,8 +138,8 @@ class EditBooking extends Component {
                 <Modal.Footer>
                     <Button bsStyle="danger" onClick={this.deleteBooking}
                             disabled={this.isLoading}>{D('Delete')}</Button>
-                    <Button bsStyle="primary" onClick={this.updateBooking} disabled={this.isLoading}
-                            disabled={!hasChange}>{D('Update')}</Button>
+                    <Button bsStyle="primary" onClick={this.updateBooking}
+                            disabled={!hasChange || this.isLoading}>{D('Update')}</Button>
                     <Button onClick={onExit}>{D('Close')}</Button>
                 </Modal.Footer>
             </Modal>

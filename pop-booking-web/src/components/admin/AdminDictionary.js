@@ -13,31 +13,27 @@ class AdminDictionary extends Component {
     currentPage = 1;
     sizePerPage = 10;
 
-    constructor(props) {
-        super(props);
-    }
-
     onPageChange = (page, sizePerPage) => {
         this.currentPage = page;
         this.sizePerPage = sizePerPage;
-    }
+    };
 
     onSizePerPageList = (sizePerPage) => {
         this.sizePerPage = sizePerPage;
         return sizePerPage;
-    }
+    };
 
     saveCell = (row, cellName, cellValue) => {
         const entry = {
             language: cellName,
             value: cellValue,
             key: row.key
-        }
+        };
         this.props.store.updateEntry(entry)
             .then(res => {
                 if (res) toast.success(D('Entry has been updated'));
             })
-    }
+    };
 
     saveAllRecordedEntries = () => {
         let entries = [];
@@ -65,11 +61,11 @@ class AdminDictionary extends Component {
 
     createSaveAllRecorded = () => {
         return <Button bsStyle="primary" onClick={this.saveAllRecordedEntries}>{D('Save all')}</Button>;
-    }
+    };
 
     customSearchField = () => {
         return (<SearchField placeholder={D('Search')}/>);
-    }
+    };
     render() {
         const {entries, languages, isRecording, recordedEntries} = this.props.store;
         if (!languages) return <div/>;
@@ -77,7 +73,7 @@ class AdminDictionary extends Component {
         const columns = [<TableHeaderColumn key={"key"} editable={false} isKey
                                             dataField={"key"}>{D('Key')}</TableHeaderColumn>];
         languages.forEach(lang =>
-            columns.push(<TableHeaderColumn key={lang.name} editable key={lang.name}
+            columns.push(<TableHeaderColumn key={lang.name} editable
                                             dataField={lang.name}>{lang.displayName}</TableHeaderColumn>));
         return (
             <div>
@@ -145,10 +141,10 @@ decorate(AdminDictionary, {
     sizePerPage: observable,
     editMode: observable,
     selected: observable
-})
+});
 
 AdminDictionary.propTypes = {
     store: PropTypes.instanceOf(LanguageStore)
-}
+};
 
-AdminDictionary.defaultProps = {}
+AdminDictionary.defaultProps = {};

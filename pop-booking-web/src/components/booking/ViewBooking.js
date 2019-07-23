@@ -1,7 +1,7 @@
 import React from 'react';
 import Helper from '../../shared/HelperFunctions';
 import {D} from '../../D';
-import {Button, Col, ControlLabel, Form, FormGroup, Grid, Modal, Row, FormControl} from "react-bootstrap";
+import {Button, Col, ControlLabel, FormGroup, Grid, Modal, Row, FormControl} from "react-bootstrap";
 import PropTypes from 'prop-types';
 import Booking from "../../models/Booking";
 

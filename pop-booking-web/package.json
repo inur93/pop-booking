@@ -4,7 +4,7 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "dateformat": "^2.2.0",
     "draft-js": "^0.10.5",
     "mobx": "^4.5.2",
@@ -31,7 +31,8 @@
     "react-token-autocomplete": "^0.5.3",
     "react-upload-file": "^2.0.0-beta.6",
     "superagent": "^3.8.3",
-    "superagent-promise": "^1.1.0"
+    "superagent-promise": "^1.1.0",
+    "snyk": "^1.198.0"
   },
   "devDependencies": {
     "node-sass": "^4.9.4",
@@ -45,6 +46,9 @@
     "start": "npm-run-all -p watch-css start-js",
     "build": "npm run build-css && react-app-env build",
     "test": "react-app-env test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "eject": "react-scripts eject",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }

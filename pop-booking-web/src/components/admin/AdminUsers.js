@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
-import {decorate, extendObservable, action, observable, autorun} from 'mobx';
+import {decorate, action, observable, autorun} from 'mobx';
 import UserStore from "../../controllers/UserStore";
 import {BootstrapTable, SearchField, TableHeaderColumn} from 'react-bootstrap-table';
 import {D} from "../../D";
@@ -28,21 +28,21 @@ class AdminUsers extends Component {
     onPageChange = (page, sizePerPage) => {
         this.currentPage = page;
         this.sizePerPage = sizePerPage;
-    }
+    };
 
     onSizePerPageList = (sizePerPage) => {
         this.sizePerPage = sizePerPage;
         return sizePerPage;
-    }
+    };
 
-    onSearchChange = (query, columns, multiColumnSearch) => {
+    onSearchChange = (query) => {
         this.query = query;
-    }
+    };
 
     editRow = (row) => {
         this.selected = row;
         this.editMode = true;
-    }
+    };
 
     expandComponent = (row) => {
         return (
@@ -58,7 +58,7 @@ class AdminUsers extends Component {
                     <Button bsStyle="primary" onClick={() => this.editRow(row)}>{D('Edit')}</Button>
                 </ButtonGroup>
             </div>);
-    }
+    };
 
     expandColumnComponent(var1) {
         const {isExpandableRow, isExpanded} = var1;
@@ -79,16 +79,16 @@ class AdminUsers extends Component {
         let str = "";
         (val || []).forEach(role => str += `${D(role)}, ` );
         return str.substr(0, str.length-2);
-    }
+    };
 
     customSearchField = () => {
         return (<SearchField placeholder={D('Search')}/>);
-    }
+    };
 
     render() {
         const {users, total} = this.props.store;
         const {editMode, selected} = this;
-        console.log(selected && selected.roles);
+
         return (
             <div>
                 {editMode &&
@@ -154,10 +154,10 @@ decorate(AdminUsers, {
     query: observable,
     editMode: observable,
     selected: observable
-})
+});
 
 AdminUsers.propTypes = {
     store: PropTypes.instanceOf(UserStore)
-}
+};
 
-AdminUsers.defaultProps = {}
+AdminUsers.defaultProps = {};

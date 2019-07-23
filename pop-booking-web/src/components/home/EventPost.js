@@ -8,13 +8,9 @@ import PropTypes from 'prop-types';
 
 class EventPost extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     removePost = () => {
         this.props.post.delete();
-    }
+    };
 
     render() {
 
@@ -42,4 +38,4 @@ export default observer(EventPost);
 
 EventPost.propTypes = {
     post: PropTypes.instanceOf(PostItem)
-}
+};

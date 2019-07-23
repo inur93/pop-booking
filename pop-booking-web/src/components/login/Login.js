@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import {decorate, observable} from 'mobx';
 import {observer} from "mobx-react";
 import {D} from '../../D';
-import {toast} from 'react-toastify';
 
 class Login extends Component {
     captcha_site_key = process.env.REACT_APP_CAPTCHA_SITE_KEY || "6LeQhC8UAAAAAPw_2k4_sZtE3w1y6VgIuCB-DMOx";
@@ -20,7 +19,7 @@ class Login extends Component {
 
     reset = () => {
         this.ref.reset();
-    }
+    };
 
     login = () => {
         this.isLoading = true;
@@ -31,11 +30,11 @@ class Login extends Component {
         }).then(() => {
             this.isLoading = false;
             this.props.onExit();
-        }).catch((reason) => {
+        }).catch(() => {
             this.isLoading = false;
             this.reset();
         });
-    }
+    };
 
     onVerifyCaptcha = (token) => {
         this.captchaToken = token;
@@ -87,7 +86,7 @@ class Login extends Component {
             </Modal>
         );
     }
-};
+}
 
 export default observer(Login);
 
@@ -101,4 +100,4 @@ decorate(Login, {
     username: observable,
     password: observable,
     isLoading: observable
-})
+});

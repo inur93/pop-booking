@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
-import {decorate, extendObservable, observable} from 'mobx';
+import {decorate, observable} from 'mobx';
 import {D} from "../../D";
 import {Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import User from "../../models/User";
@@ -23,7 +23,6 @@ class EditUser extends Component {
     }
 
     save = () => {
-        const self = this;
         this.props.user.roles = this.user.roles;
         this.props.store.updateUser(this.props.user)
             .then(saved => {

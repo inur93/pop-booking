@@ -1,4 +1,4 @@
-import {computed, decorate, observable} from 'mobx';
+import {computed, decorate} from 'mobx';
 import {stores} from "../controllers/Context";
 
 export default class PostItem {

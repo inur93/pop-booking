@@ -6,7 +6,6 @@ import {D} from "../../D";
 import {Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import UserStore from "../../controllers/UserStore";
 import User from "../../models/User";
-import SecurityStore from "../../controllers/SecurityStore";
 
 class MyProfile extends Component {
 
@@ -17,9 +16,6 @@ class MyProfile extends Component {
         this.user = JSON.parse(JSON.stringify(props.user || {}));
     }
 
-    /*componentWillReceiveProps(newProps){
-
-    }*/
     save = () => {
         this.isSaving = true;
         if(this.props.isSelf){
@@ -27,7 +23,7 @@ class MyProfile extends Component {
         }else {
             this.props.store.updateUser(this.user);
         }
-    }
+    };
 
     render() {
         const {onExit} = this.props;
@@ -76,14 +72,14 @@ MyProfile.propTypes = {
     user: PropTypes.instanceOf(User),
     store: PropTypes.instanceOf(UserStore),
     isSelf: PropTypes.bool
-}
+};
 
 MyProfile.defaultProps = {
     isSelf: true
-}
+};
 
 decorate(MyProfile, {
     isSaving: observable,
     user: observable
 
-})
+});

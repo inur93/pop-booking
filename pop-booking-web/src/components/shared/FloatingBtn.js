@@ -5,11 +5,6 @@ import {Glyphicon} from "react-bootstrap";
 
 class FloatingBtn extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-
     render() {
         return (
             <div className="floating-btn" onClick={this.props.onClick}>
@@ -25,6 +20,6 @@ export default observer(FloatingBtn)
 
 FloatingBtn.propTypes = {
     onClick: PropTypes.func
-}
+};
 
-FloatingBtn.defaultProps = {}
+FloatingBtn.defaultProps = {};

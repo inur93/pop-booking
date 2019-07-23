@@ -8,10 +8,6 @@ import {D} from '../../D';
 
 class BookingList extends React.Component {
 
-    constructor() {
-        super();
-    }
-
     render() {
         const {bookings} = this.props;
         if (!bookings || bookings.length === 0) return <div/>;
@@ -36,7 +32,7 @@ export default observer(BookingList);
 
 BookingList.propTypes = {
     bookings: PropTypes.array
-}
+};
 
 
 class BookingRow extends React.Component {
@@ -59,4 +55,4 @@ class BookingRow extends React.Component {
 
 BookingRow.propTypes = {
     booking: PropTypes.instanceOf(Booking)
-}
+};

@@ -27,10 +27,9 @@ export default class LanguageStore {
             action((languages) => {
                 this.languages.replace(languages);
             }));
-        let dictionary;
-        if ((dictionary = localStorage.getItem('dictionary'))) {
+        let dictionary = localStorage.getItem('dictionary');
+        if (dictionary) {
             this.updateDictionary(JSON.parse(dictionary));
-
         }
         this.fetchDictionary(this.language);
 
@@ -45,7 +44,7 @@ export default class LanguageStore {
                     });
                 })
             }, 1000);
-        }
+        };
 
         updateRecords();
         reaction(() => this.isRecording, (isRecording) => {
@@ -91,7 +90,7 @@ export default class LanguageStore {
             } else {
                 entries[entryKey] = {
                     key: entryKey
-                }
+                };
                 entries[entryKey][lang] = value;
             }
         }
@@ -101,7 +100,7 @@ export default class LanguageStore {
             list.push(entries[key]);
         });
         return list;
-    }
+    };
 
     createMultipleEntries = (entries) => {
         return this.client.POST(`/dictionary/create`, entries)
@@ -109,7 +108,7 @@ export default class LanguageStore {
                 this.updateDictionary(created);
                 return created;
             });
-    }
+    };
 
     updateEntry = (entry) => {
         const id = this.idMap[`${entry.language}#${entry.key}`];
@@ -119,7 +118,7 @@ export default class LanguageStore {
             entry.id = id;
             return this.client.PUT('/dictionary/' + id, entry);
         }
-    }
+    };
 
     updateDictionary = (list) => {
         list.forEach(el => {
@@ -130,7 +129,7 @@ export default class LanguageStore {
             delete this.recordedEntriesUnobservedMap[key];
             this.recordedEntriesMap.delete(key);
         })
-    }
+    };
 
     getValue(key) {
         key = key.toLowerCase();
@@ -171,7 +170,7 @@ decorate(LanguageStore, {
     recordedEntries: computed,
     total: computed,
     entries: computed
-})
+});
 
 
 
