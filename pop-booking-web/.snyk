@@ -1,0 +1,88 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > tar-pack > debug:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > tar-pack > debug:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > mocha > debug:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:extend:20180424':
+    - superagent > extend:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > extend:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > extend:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:hoek:20180212':
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > hawk > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > hawk > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > hawk > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > hawk > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > hawk > sntp > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > hawk > sntp > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > hawk > cryptiles > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > hawk > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > hawk > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > hawk > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > hawk > sntp > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > hawk > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > hawk > cryptiles > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > hawk > cryptiles > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > hawk > sntp > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > hawk > cryptiles > boom > hoek:
+        patched: '2019-07-23T17:39:52.620Z'
+  SNYK-JS-LODASH-450202:
+    - react-big-calendar > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:lodash:20180130':
+    - react-token-autocomplete > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > html-webpack-plugin > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > eslint > inquirer > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > babel-core > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > babel-core > babel-plugin-proto-to-assign > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > lodash:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:minimatch:20160620':
+    - react-token-autocomplete > peters-toolbelt > mocha > glob > minimatch:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > radium > babel > babel-core > minimatch:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:ms:20170412':
+    - react-token-autocomplete > peters-toolbelt > mocha > debug > ms:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:stringstream:20180511':
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > stringstream:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > stringstream:
+        patched: '2019-07-23T17:39:52.620Z'
+  'npm:tough-cookie:20170905':
+    - react-token-autocomplete > radium > babel > chokidar > fsevents > node-pre-gyp > request > tough-cookie:
+        patched: '2019-07-23T17:39:52.620Z'
+    - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > tough-cookie:
+        patched: '2019-07-23T17:39:52.620Z'
