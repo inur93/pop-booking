@@ -47,6 +47,10 @@ Optionally you can also provide the following properties:
     - captcha.url (as of 29-11-2018 the url is 'https://www.google.com/recaptcha/api/siteverify')
     - captcha.secret
     
+added 23-07-2019
+
+    - booking.cors.allowed_origins (default is '*'. example: http://localhost:3000;https://mysite.com) 
+    
 At last to configure log4j create log4j.properties in the resources folder.
 The file could look like this:
 
