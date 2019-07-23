@@ -1,4 +1,4 @@
-import React from 'react';
+import 'react';
 import {decorate, observable} from 'mobx';
 import Booking from "../models/Booking";
 

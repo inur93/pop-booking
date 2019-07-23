@@ -79,7 +79,7 @@ class BookingCalendar extends React.Component {
     }
 
     onSelecting = ({start, end}) => {
-        console.log(start + " - " + end);
+
         /*
         if(!SecurityStore.isLoggedIn)
         transaction(() => {

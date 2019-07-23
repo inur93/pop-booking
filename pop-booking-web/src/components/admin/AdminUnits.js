@@ -16,22 +16,17 @@ class AdminUnits extends Component {
     editMode = false;
     showAddModal = false;
 
-    constructor(props) {
-        super(props);
-
-    }
-
     editRow = (row) => {
         this.selected = row;
         this.editMode = true;
-    }
+    };
 
     deleteRow = (row) => {
         this.props.store.deleteUnit(row)
             .then(() => {
                 toast.success(D('The unit has been deleted'));
             })
-    }
+    };
 
     expandComponent = (row) => {
         return (
@@ -76,7 +71,7 @@ class AdminUnits extends Component {
     render() {
         const {bookableItems} = this.props.store;
         const {editMode, showAddModal, selected} = this;
-        console.log(selected && selected.roles);
+
         return (
             <div>
                 {editMode &&
@@ -129,10 +124,10 @@ decorate(AdminUnits, {
     editMode: observable,
     showAddModal: observable,
     selected: observable
-})
+});
 
 AdminUnits.propTypes = {
     store: PropTypes.instanceOf(BookableObjectsStore)
-}
+};
 
-AdminUnits.defaultProps = {}
+AdminUnits.defaultProps = {};

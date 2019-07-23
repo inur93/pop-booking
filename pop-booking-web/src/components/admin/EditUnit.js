@@ -4,7 +4,6 @@ import {observer} from 'mobx-react';
 import {decorate, observable} from 'mobx';
 import {D} from "../../D";
 import {Button, Col, ControlLabel, DropdownButton, FormControl, FormGroup, MenuItem, Modal, Row} from "react-bootstrap";
-import {Typeahead} from "react-bootstrap-typeahead";
 import {toast} from 'react-toastify';
 import BookableObjectsStore from "../../controllers/BookableObjectsStore";
 import BookableItem from "../../models/BookableItem";

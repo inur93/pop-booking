@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Col, Grid, MenuItem, Nav, Navbar, NavDropdown, NavItem, Row} from "react-bootstrap";
 import {observer} from 'mobx-react';
-import {computed, decorate, action, observable} from "mobx";
+import {action, decorate, observable} from "mobx";
 
 import Home from "./components/home/Home";
 
@@ -9,12 +9,11 @@ import Login from "./components/login/Login";
 import BookingCalendar from "./components/booking/BookingCalendar";
 import {D} from './D';
 import {ToastContainer} from "react-toastify";
-import {BrowserRouter as Router, Route, Switch, withRouter} from 'react-router-dom';
+import {Route, withRouter} from 'react-router-dom';
 import {IndexLinkContainer} from 'react-router-bootstrap';
 import MyProfile from "./components/login/MyProfile";
 import AdminPage from "./components/admin/AdminPage";
 import PropTypes from 'prop-types';
-import {stores} from "./controllers/Context";
 import SecurityStore from "./controllers/SecurityStore";
 
 class App extends Component {
@@ -24,20 +23,14 @@ class App extends Component {
         LOGIN: '/login',
         CALENDAR: '/calendar',
         ADMIN: '/admin'
-    }
+    };
 
     showLogin = false;
     showMyProfile = false;
 
-    constructor(props) {
-        super(props);
-    }
-
-
     selectLanguage = (key) => {
-        let value = key.split('.')[1];
-        this.props.stores.language.language = value;
-    }
+        this.props.stores.language.language = key.split('.')[1];
+    };
 
     editProfile = () => {
         const res = this.props.stores.user.fetchCurrentUser();
@@ -51,7 +44,7 @@ class App extends Component {
 
     onLogin = (credentials) => {
         return this.props.stores.security.login(credentials)
-            .then(res => {
+            .then(() => {
                 this.showLogin = false;
             })
     };
@@ -87,7 +80,7 @@ class App extends Component {
                         </Nav>
                         <Nav pullRight>
                             {isLoggedIn &&
-                            <NavItem eventKey={pages.PROFILE} onSelect={this.editProfile}>
+                            <NavItem onSelect={this.editProfile}>
                                 {user.username}
                             </NavItem>
                             }

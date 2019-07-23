@@ -19,11 +19,6 @@ class AdminPage extends React.Component {
         DICTIONARY: 'dictionary'
     };
 
-    constructor(props) {
-        super(props);
-    };
-
-
     render() {
         const {UNITS, USERS, DICTIONARY} = this.tabs;
         const {stores} = this.props;
@@ -53,37 +48,15 @@ class AdminPage extends React.Component {
                 </Row>
             </Tab.Container>
         );
-        /* return (
-             <Tab.Container id="left-tabs-example" defaultActiveKey={USERS}>
-                 <Row className="clearfix">
-                     <Col sm={3} md={2}>
-                         <Nav bsStyle="pills" stacked>
-                             <NavItem eventKey={USERS}>{D('Users')} <Badge pullRight>{stores.user.total}</Badge></NavItem>
-                             <NavItem eventKey={UNITS}>{D('Units')} <Badge pullRight>{stores.bookableItem.total}</Badge></NavItem>
-                         </Nav>
-                     </Col>
-                     <Col sm={9} md={10}>
-                         <Tab.Content animation>
-                             <Tab.Pane eventKey={USERS}>
-                                 <AdminUsers store={stores.user}/>
-                             </Tab.Pane>
-                             <Tab.Pane eventKey={UNITS}>
-                                 <AdminUnits store={stores.bookableItem}/>
-                             </Tab.Pane>
-                         </Tab.Content>
-                     </Col>
-                 </Row>
-             </Tab.Container>
-         );*/
     }
 }
 
 export default observer(AdminPage);
 
-decorate(AdminPage, {})
+decorate(AdminPage, {});
 
 AdminPage.propTypes = {
     stores: PropTypes.object,
     tab: PropTypes.string,
     history: PropTypes.object
-}
+};

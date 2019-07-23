@@ -1,4 +1,4 @@
-import React from 'react';
+import 'react';
 import {computed, decorate, observable} from 'mobx';
 import BookableItem from "../models/BookableItem";
 
@@ -35,11 +35,11 @@ class BookableObjectsStore {
                 this.bookableItems.push(unit);
                 return unit;
             })
-    }
+    };
 
     updateUnit = (unit) => {
         return this.client.PUT(`${this.path}/${unit.id}`, unit);
-    }
+    };
 
     deleteUnit = (unit) => {
         return this.client.DELETE(`${this.path}/${unit.id}`)
@@ -56,4 +56,4 @@ decorate(BookableObjectsStore, {
     bookableItems: observable,
     activeBookableItems: computed,
     total: computed
-})
+});
