@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.1
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
@@ -86,3 +86,34 @@ patch:
         patched: '2019-07-23T17:39:52.620Z'
     - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > tough-cookie:
         patched: '2019-07-23T17:39:52.620Z'
+  SNYK-JS-LODASH-567746:
+    - react-big-calendar > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - react-bootstrap-typeahead > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - react-color > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - react-color > reactcss > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > @snyk/dep-graph > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > inquirer > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-config > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-mvn-plugin > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-nodejs-lockfile-parser > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-nuget-plugin > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > @snyk/dep-graph > graphlib > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-go-plugin > graphlib > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-nodejs-lockfile-parser > graphlib > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
+    - snyk > snyk-php-plugin > @snyk/composer-lockfile-parser > lodash:
+        patched: '2020-04-30T23:29:05.384Z'
