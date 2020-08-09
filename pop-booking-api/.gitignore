@@ -4,7 +4,6 @@ build
 target
 dev.properties
 prod.properties
-log4j.properties
 config
 .idea/
 *.iml

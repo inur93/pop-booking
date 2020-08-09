@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+ prod-build:
+  image: production-build
+  build:
+    context: ./
+    dockerfile: Dockerfile
+  volumes:
+   - ./pop-booking-api:/api
+   - ./pop-booking-web:/web
+   - /web/node_modules
+   - ./pop-booking-web/build:/api/../pop-booking-web/build
