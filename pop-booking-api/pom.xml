@@ -9,7 +9,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>true</failOnMissingWebXml>
-        <jersey2.version>2.29</jersey2.version>
+        <jersey2.version>2.30.1</jersey2.version>
         <jaxb-api.version>2.3.0</jaxb-api.version>
         <jaxrs.version>2.1</jaxrs.version>
         <hibernate.version>5.2.5.Final</hibernate.version>
