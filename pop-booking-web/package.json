@@ -9,7 +9,7 @@
     "draft-js": "^0.10.5",
     "mobx": "^4.5.2",
     "mobx-react": "^5.3.5",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-app-env": "^1.2.3",
