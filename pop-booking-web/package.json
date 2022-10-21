@@ -32,7 +32,7 @@
     "react-upload-file": "^2.0.0-beta.6",
     "superagent": "^3.8.3",
     "superagent-promise": "^1.1.0",
-    "snyk": "^1.198.0"
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "node-sass": "^4.9.4",
@@ -47,7 +47,7 @@
     "build": "npm run build-css && react-app-env build",
     "test": "react-app-env test --env=jsdom",
     "eject": "react-scripts eject",
-    "snyk-protect": "snyk protect",
+    "snyk-protect": "snyk-protect",
     "prepare": "npm run snyk-protect"
   },
   "snyk": true
