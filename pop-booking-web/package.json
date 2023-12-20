@@ -30,9 +30,9 @@
     "react-toastify": "^3.4.3",
     "react-token-autocomplete": "^0.5.3",
     "react-upload-file": "^2.0.0-beta.6",
-    "superagent": "^3.8.3",
+    "superagent": "^7.0.2",
     "superagent-promise": "^1.1.0",
-    "snyk": "^1.198.0"
+    "snyk": "^1.996.0"
   },
   "devDependencies": {
     "node-sass": "^4.9.4",
