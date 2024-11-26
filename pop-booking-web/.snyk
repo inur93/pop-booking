@@ -86,3 +86,8 @@ patch:
         patched: '2019-07-23T17:39:52.620Z'
     - react-token-autocomplete > peters-toolbelt > webpack > watchpack > chokidar > fsevents > node-pre-gyp > request > tough-cookie:
         patched: '2019-07-23T17:39:52.620Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-03T23:27:58.109Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-03T23:27:58.109Z'
